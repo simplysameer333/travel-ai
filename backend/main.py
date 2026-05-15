@@ -9,6 +9,7 @@ from slowapi.errors import RateLimitExceeded
 
 from app.api.routes import router as search_router
 from app.api.auth import router as auth_router
+from app.api.chat import router as chat_router
 from app.core.limiter import limiter
 from app.db.database import close_mongo_connection, connect_to_mongo, db
 
@@ -82,6 +83,7 @@ async def shutdown_event() -> None:
 
 app.include_router(search_router)
 app.include_router(auth_router)
+app.include_router(chat_router)
 
 @app.get("/health", tags=["Health"])
 async def health_check():

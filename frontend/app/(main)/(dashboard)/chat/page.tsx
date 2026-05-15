@@ -5,32 +5,37 @@ import { Bot, Send, Plane, RotateCcw, Bookmark } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { useChatStore } from '@/store/chatStore'
 import { useSearchParams } from 'next/navigation'
+import { streamChat } from '@/lib/chat'
+
+const SUGGESTIONS = [
+  'Plan a 5-day trip to Goa under ₹15,000',
+  'Cheapest flights from Delhi to Mumbai this weekend',
+  'Best hill stations to visit in July',
+  'Train options from Bangalore to Chennai',
+]
 
 function ChatInner() {
   const { user } = useAuthStore()
   const firstName = user?.full_name?.split(' ')[0] ?? 'there'
 
-  const { messages, loading, addMessage, setLoading, reset } = useChatStore()
+  const { messages, loading, addMessage, startStreamingMessage, appendToken, setLoading, reset } = useChatStore()
   const bottomRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef  = useRef<HTMLInputElement>(null)
   const initialised = useRef(false)
   const searchParams = useSearchParams()
 
-  const greeting = `Hey ${firstName}! 🌍 I'm Travel Buddy, your personal AI travel companion. I can help you plan trips, hunt down cheap flights and trains, compare hotels, and build full itineraries. What adventure are we planning?`
+  const greeting = `Hey ${firstName}! 🌍 I'm Travel Buddy, your personal AI travel companion. I can help you plan trips, find cheap flights and trains, compare hotels, and build full itineraries. What adventure are we planning?`
 
-  // Initialise store with greeting on first mount; if ?q= param present, send it
   useEffect(() => {
     if (initialised.current) return
     initialised.current = true
-    if (messages.length === 0) {
-      reset(greeting)
-    }
+    if (messages.length === 0) reset(greeting)
     const q = searchParams.get('q')
     if (q) sendMessage(q)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Lock both html + body scroll while mounted — kills the browser scrollbar entirely
+  // Lock scroll on body while chat is mounted
   useEffect(() => {
     const html = document.documentElement
     const body = document.body
@@ -51,36 +56,36 @@ function ChatInner() {
   const sendMessage = async (text: string) => {
     if (!text.trim() || loading) return
     if (inputRef.current) inputRef.current.value = ''
+
     addMessage({ role: 'user', content: text.trim() })
-    setLoading(true)
 
-    await new Promise(r => setTimeout(r, 1000))
+    // Collect full conversation to send as context
+    const history = [
+      ...messages.map(m => ({ role: m.role, content: m.content })),
+      { role: 'user' as const, content: text.trim() },
+    ]
 
-    addMessage({
-      role: 'assistant',
-      content: "Great question! I'm being wired up to our live AI engine right now. Full responses with real flight data, train schedules and hotel pricing are coming very soon. For now, use the Search page to find results manually!",
-    })
-    setLoading(false)
+    const streamId = startStreamingMessage()
+
+    await streamChat(
+      history,
+      (token) => appendToken(streamId, token),
+      ()      => setLoading(false),
+      (err)   => {
+        appendToken(streamId, err)
+        setLoading(false)
+      },
+    )
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const val = inputRef.current?.value ?? ''
-    sendMessage(val)
+    sendMessage(inputRef.current?.value ?? '')
   }
 
   const resetChat = () => reset(greeting)
 
-  const SUGGESTIONS = [
-    'Plan a 5-day trip to Goa under ₹15,000',
-    'Cheapest flights from Delhi to Mumbai this weekend',
-    'Best hill stations to visit in July',
-    'Train options from Bangalore to Chennai',
-  ]
-
   return (
-    // fixed: locks frame to viewport regardless of content behind it
-    // mobile: bottom-16 clears fixed bottom nav; md: left-64 accounts for sidebar
     <div className="fixed top-[84px] left-0 right-0 bottom-16 md:left-64 md:bottom-0 flex flex-col bg-white overflow-hidden z-20">
 
       {/* ── Header ─────────────────────────────────────────────────── */}
@@ -113,7 +118,6 @@ function ChatInner() {
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-4 bg-slate-50 no-scrollbar">
         {messages.map(msg => (
           <div key={msg.id} className={`flex gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-
             {msg.role === 'assistant' ? (
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shrink-0 shadow-md shadow-violet-500/20 mt-0.5">
                 <Bot className="w-4 h-4 text-white" />
@@ -125,16 +129,20 @@ function ChatInner() {
             )}
 
             <div className={`flex flex-col gap-1 max-w-[82%] sm:max-w-[72%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-              <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+              <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
                 msg.role === 'user'
                   ? 'bg-gradient-to-br from-sky-500 to-blue-600 text-white rounded-tr-sm'
                   : 'bg-white border border-slate-100 text-slate-800 shadow-sm rounded-tl-sm'
               }`}>
                 {msg.content}
+                {/* Blinking cursor while this message is streaming */}
+                {loading && msg.id.startsWith('stream-') && msg === messages[messages.length - 1] && (
+                  <span className="inline-block w-0.5 h-4 bg-violet-400 animate-pulse ml-0.5 align-middle" />
+                )}
               </div>
               <div className={`flex items-center gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                 <span className="text-[10px] text-slate-400">{msg.time}</span>
-                {msg.role === 'assistant' && (
+                {msg.role === 'assistant' && msg.content && (
                   <button className="text-[10px] text-slate-400 hover:text-violet-500 transition-colors flex items-center gap-1">
                     <Bookmark className="w-3 h-3" /> Save
                   </button>
@@ -144,7 +152,8 @@ function ChatInner() {
           </div>
         ))}
 
-        {loading && (
+        {/* Typing dots — only while waiting for the first token */}
+        {loading && messages[messages.length - 1]?.content === '' && (
           <div className="flex gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shrink-0 mt-0.5">
               <Bot className="w-4 h-4 text-white" />
@@ -161,7 +170,7 @@ function ChatInner() {
         <div ref={bottomRef} />
       </div>
 
-      {/* ── Suggestions — visible only at start ─────────────────────── */}
+      {/* ── Suggestions ─────────────────────────────────────────────── */}
       {messages.length <= 1 && (
         <div className="px-4 py-2.5 bg-white border-t border-slate-100 shrink-0">
           <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-2">Try asking</p>

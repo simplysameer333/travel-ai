@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Bot, X, Send, Plane, ArrowRight, Maximize2 } from 'lucide-react'
 import { useChatStore } from '@/store/chatStore'
 import { useAuthStore } from '@/store/authStore'
+import { streamChat } from '@/lib/chat'
 
 const QUICK = [
   'Cheapest flights this weekend',
@@ -19,7 +20,7 @@ export default function TravelBuddyWidget() {
   const pathname = usePathname()
   const router = useRouter()
   const { user } = useAuthStore()
-  const { messages, loading, widgetOpen, addMessage, setLoading, setWidgetOpen, reset } = useChatStore()
+  const { messages, loading, widgetOpen, addMessage, startStreamingMessage, appendToken, setLoading, setWidgetOpen, reset } = useChatStore()
 
   const [visible, setVisible]     = useState(false)
   const [tooltipOn, setTooltipOn] = useState(false)
@@ -66,16 +67,22 @@ export default function TravelBuddyWidget() {
   const sendMessage = async (text: string) => {
     if (!text.trim() || loading) return
     if (inputRef.current) inputRef.current.value = ''
+
     addMessage({ role: 'user', content: text.trim() })
-    setLoading(true)
 
-    await new Promise(r => setTimeout(r, 1000))
+    const history = [
+      ...messages.map(m => ({ role: m.role, content: m.content })),
+      { role: 'user' as const, content: text.trim() },
+    ]
 
-    addMessage({
-      role: 'assistant',
-      content: "I'm being wired up to our live AI engine right now. Full responses with real flight data and pricing are coming very soon! Open the full chat for a better experience.",
-    })
-    setLoading(false)
+    const streamId = startStreamingMessage()
+
+    await streamChat(
+      history,
+      (token) => appendToken(streamId, token),
+      ()      => setLoading(false),
+      (err)   => { appendToken(streamId, err); setLoading(false) },
+    )
   }
 
   const handleSubmit = (e: React.FormEvent) => {
