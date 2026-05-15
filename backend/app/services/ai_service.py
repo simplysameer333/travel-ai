@@ -22,9 +22,16 @@ from app.services import search_service
 
 log = logging.getLogger(__name__)
 
-# LangSmith tracing is enabled automatically when LANGSMITH_TRACING=true
-# and LANGSMITH_API_KEY are present in the environment.
-_client = wrap_openai(openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY))
+# Lazy client — initialized on first use so the server starts without OPENAI_API_KEY set.
+_client: openai.AsyncOpenAI | None = None
+
+def _get_client() -> openai.AsyncOpenAI:
+    global _client
+    if _client is None:
+        if not settings.OPENAI_API_KEY:
+            raise RuntimeError("OPENAI_API_KEY is not configured. Set it in Railway environment variables.")
+        _client = wrap_openai(openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY))
+    return _client
 
 # In-process LLM cache: normalized_query → parsed intent dict.
 # Avoids repeat API calls for identical queries within the same server session.
@@ -80,7 +87,7 @@ async def parse_and_search(query: str) -> dict[str, Any]:
         intent_data = _intent_cache[cache_key]
         print(f"[AI] Cache hit for: {cache_key!r}")
     else:
-        response = await _client.chat.completions.create(
+        response = await _get_client().chat.completions.create(
             model=settings.OPENAI_MODEL,
             messages=[
                 {"role": "system", "content": _SYSTEM_PROMPT.format(today=today.isoformat())},
