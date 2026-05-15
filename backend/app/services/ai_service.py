@@ -9,7 +9,6 @@ from datetime import date, timedelta
 from typing import Any
 
 import openai
-from langsmith.wrappers import wrap_openai
 
 from app.core.config import settings
 from app.schemas.search import (
@@ -23,6 +22,8 @@ from app.services import search_service
 log = logging.getLogger(__name__)
 
 # Lazy client — initialized on first use so the server starts without OPENAI_API_KEY set.
+# LangSmith auto-instruments the client via env vars (LANGSMITH_TRACING, LANGSMITH_API_KEY)
+# without needing wrap_openai, which has a pydantic v2 RunTree incompatibility.
 _client: openai.AsyncOpenAI | None = None
 
 def _get_client() -> openai.AsyncOpenAI:
@@ -30,7 +31,7 @@ def _get_client() -> openai.AsyncOpenAI:
     if _client is None:
         if not settings.OPENAI_API_KEY:
             raise RuntimeError("OPENAI_API_KEY is not configured. Set it in Railway environment variables.")
-        _client = wrap_openai(openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY))
+        _client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
     return _client
 
 # In-process LLM cache: normalized_query → parsed intent dict.
