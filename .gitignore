@@ -1,0 +1,32 @@
+# ── Secrets — never commit ────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+backend/venv/
+backend/.venv/
+backend/env/
+*.egg-info/
+
+# ── Node / Next.js ────────────────────────────────────────────────────────
+node_modules/
+frontend/.next/
+frontend/out/
+
+# ── OS ───────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ───────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+
+# ── Claude Code local session data ────────────────────────────────────────
+.claude/
+
+# ── Tables / schema drafts ────────────────────────────────────────────────
+tables/

@@ -1,0 +1,785 @@
+# Claude Code Prompt — Implement Premium TravelAI User Profile & Travel Dashboard
+
+Implement a production-grade AI travel user dashboard/profile system for the TravelAI platform.
+
+This should NOT feel like a generic account page.
+
+It should feel like:
+
+* a premium AI-powered travel control center
+* modern airline dashboard
+* intelligent travel workspace
+* centralized travel management system
+
+The dashboard should organize:
+
+* trips
+* bookings
+* cancellations
+* payments
+* refunds
+* saved destinations
+* travel documents
+* AI conversations
+* notifications
+* preferences
+
+in a highly intuitive and mobile-first way.
+
+The UI/UX should feel inspired by:
+
+* modern airline apps
+* premium travel startups
+* AI-native products
+* clean SaaS dashboards
+
+Reference UX patterns:
+
+* centralized booking dashboards
+* trip timelines
+* payment tracking
+* travel wallets
+* support/chat systems
+* trip management flows ([WP Travel][1])
+
+---
+
+# Tech Stack
+
+Frontend:
+
+* Next.js 16 App Router
+* TypeScript
+* React 19
+* TailwindCSS v4
+* shadcn/ui
+* Framer Motion
+* Zustand
+* Axios
+* Lucide React
+
+Backend:
+
+* FastAPI
+* MongoDB
+* Motor async driver
+* Pydantic models
+* JWT authentication
+
+Infrastructure:
+
+* Railway
+* MongoDB Atlas / Railway MongoDB
+
+---
+
+# Main Goal
+
+Build a fully organized user profile + travel dashboard system.
+
+The dashboard should:
+
+* centralize all user travel activity
+* minimize friction
+* support AI-native workflows
+* support future scalability
+* support mobile-first interaction
+* support conversational travel experience
+
+The system must feel:
+
+* modern
+* premium
+* intuitive
+* fast
+* travel-focused
+* AI-native
+
+---
+
+# ROUTES TO CREATE
+
+Create:
+
+```txt
+/dashboard
+/profile
+/profile/security
+/profile/payments
+/profile/preferences
+/profile/travel-documents
+/trips
+/trips/[tripId]
+/bookings
+/payments
+/wallet
+/chat
+/notifications
+/support
+```
+
+---
+
+# MAIN DASHBOARD STRUCTURE
+
+The dashboard should have:
+
+# LEFT SIDEBAR (Desktop)
+
+Sections:
+
+```txt
+Dashboard
+My Trips
+Bookings
+Payments
+Wallet
+Saved Trips
+Travel Documents
+AI Travel Assistant
+Notifications
+Support
+Profile Settings
+Logout
+```
+
+---
+
+# MOBILE UX
+
+On mobile:
+
+* bottom navigation OR collapsible drawer
+* thumb-friendly spacing
+* centered layouts
+* large tap targets
+
+Use:
+
+```txt
+max-w-7xl mx-auto px-4
+```
+
+for all dashboard pages.
+
+---
+
+# DASHBOARD HOME PAGE
+
+Create a premium dashboard landing page.
+
+Sections:
+
+# 1. Welcome Header
+
+Example:
+
+```txt
+Good evening, Rahul ✈️
+Ready for your next adventure?
+```
+
+Include:
+
+* profile avatar
+* AI greeting
+* personalized recommendations
+
+---
+
+# 2. Upcoming Trips Section
+
+Show:
+
+* destination
+* travel dates
+* status
+* payment status
+* countdown
+* quick actions
+
+Card design:
+
+* premium travel cards
+* large imagery
+* rounded corners
+* subtle hover effects
+
+Include:
+
+* View Trip
+* Manage Booking
+* Chat Support
+
+---
+
+# 3. AI Recommendations
+
+AI-generated suggestions:
+
+* cheap destinations
+* weather recommendations
+* budget opportunities
+* price drops
+* trending trips
+
+Example:
+
+```txt
+Flights to Bali dropped 18% this week
+```
+
+---
+
+# 4. Payment Overview
+
+Show:
+
+* pending payments
+* completed payments
+* refunds
+* credits
+* travel wallet balance
+
+---
+
+# 5. Recent Activity Timeline
+
+Include:
+
+* bookings
+* cancellations
+* refunds
+* payment updates
+* AI trip generations
+* support responses
+
+---
+
+# MY TRIPS PAGE
+
+Create organized trip management system.
+
+Sections:
+
+* Upcoming Trips
+* Ongoing Trips
+* Past Trips
+* Cancelled Trips
+* Saved Trips / Wishlist
+
+Each trip card should show:
+
+* flight info
+* hotel info
+* transport info
+* itinerary summary
+* booking status
+* total spend
+* trip companions
+
+Include filters:
+
+* Upcoming
+* International
+* Domestic
+* Budget
+* Completed
+
+Reference centralized travel dashboards and booking hubs. ([WP Travel][1])
+
+---
+
+# TRIP DETAILS PAGE
+
+Create detailed trip workspace.
+
+Sections:
+
+```txt
+Overview
+Flights
+Hotels
+Transport
+Itinerary
+Payments
+Documents
+Chat
+Support
+```
+
+Include:
+
+* timeline view
+* downloadable invoices
+* trip PDFs
+* AI itinerary assistant
+* live travel updates placeholder
+
+---
+
+# BOOKINGS PAGE
+
+Centralized booking management.
+
+Display:
+
+* all bookings
+* booking IDs
+* provider
+* booking status
+* payment status
+* cancellation status
+
+Actions:
+
+* View Details
+* Cancel Booking
+* Modify Booking
+* Download Invoice
+
+Include:
+
+* advanced filters
+* search
+* pagination
+
+---
+
+# CANCELLATION MANAGEMENT
+
+Create organized cancellation system.
+
+Include:
+
+* cancellation requests
+* refund tracking
+* cancellation eligibility
+* refund timelines
+* cancellation policies
+
+Status examples:
+
+```txt
+Refund Processing
+Refund Completed
+Cancellation Pending
+```
+
+---
+
+# PAYMENTS PAGE
+
+Create complete payment center.
+
+Sections:
+
+* payment history
+* invoices
+* refunds
+* pending payments
+* saved cards
+* UPI placeholder
+* wallet credits
+
+Each payment entry:
+
+* amount
+* status
+* payment method
+* invoice download
+* booking reference
+
+Reference travel payment dashboards and receipts UX. ([help.squadtrip.com][2])
+
+---
+
+# WALLET PAGE
+
+Create travel wallet system.
+
+Show:
+
+* cashback
+* promo credits
+* referral credits
+* refund credits
+* coupon history
+
+Include:
+
+* transaction timeline
+* expiry dates
+* usable balance
+
+---
+
+# PROFILE PAGE
+
+Sections:
+
+```txt
+Personal Information
+Travel Preferences
+Emergency Contact
+Loyalty Programs
+Frequent Flyer Numbers
+Travel Preferences
+Notification Preferences
+```
+
+Reference travel profile structures used for bookings and travel documents. ([support.travelperk.com][3])
+
+---
+
+# PERSONAL INFORMATION
+
+Fields:
+
+* Full Name
+* Email
+* Phone
+* DOB
+* Gender
+* Nationality
+* Country of Residence
+
+---
+
+# TRAVEL DOCUMENTS PAGE
+
+VERY IMPORTANT for travel platform.
+
+Support:
+
+* passport storage
+* visa information
+* ID proofs
+* emergency contacts
+
+Fields:
+
+* Passport Number
+* Expiry Date
+* Issuing Country
+* Visa Expiry
+
+IMPORTANT:
+Documents must NEVER be publicly accessible.
+
+Prepare architecture for:
+
+* encrypted storage
+* future OCR support
+* secure uploads
+
+---
+
+# SECURITY PAGE
+
+Sections:
+
+* password change
+* active sessions
+* login history
+* Google linked accounts
+* device history
+* MFA placeholder
+
+Include:
+
+* session revoke
+* logout all devices
+
+---
+
+# AI CHAT PAGE
+
+Create travel AI conversation history.
+
+Features:
+
+* previous conversations
+* saved itineraries
+* AI-generated trip plans
+* favorite responses
+
+This is VERY important for AI-first identity.
+
+---
+
+# NOTIFICATIONS PAGE
+
+Organize:
+
+* booking updates
+* payment alerts
+* AI recommendations
+* travel reminders
+* visa reminders
+* check-in reminders
+* price drop alerts
+
+Include:
+
+* read/unread
+* categories
+* filters
+
+---
+
+# SUPPORT PAGE
+
+Create centralized travel support system.
+
+Include:
+
+* AI support assistant
+* ticket history
+* live chat placeholder
+* FAQs
+* emergency travel support
+
+---
+
+# DATABASE MODELS
+
+Create models for:
+
+```python
+User
+Trip
+Booking
+Payment
+Refund
+Wallet
+TravelDocument
+Notification
+ChatHistory
+SavedTrip
+SupportTicket
+```
+
+Use MongoDB ObjectIds safely.
+
+---
+
+# BACKEND ARCHITECTURE
+
+Create:
+
+```txt
+/app/api/dashboard
+/app/api/trips
+/app/api/bookings
+/app/api/payments
+/app/api/profile
+/app/api/support
+/app/services/dashboard
+/app/services/trips
+/app/services/payments
+```
+
+---
+
+# FRONTEND ARCHITECTURE
+
+Create:
+
+```txt
+/app/dashboard
+/components/dashboard
+/components/trips
+/components/payments
+/components/profile
+/store
+/lib/api
+```
+
+---
+
+# DESIGN REQUIREMENTS
+
+The design MUST:
+
+* feel premium
+* use centered layouts
+* support mobile perfectly
+* avoid clutter
+* use smooth transitions
+* use glassmorphism lightly
+* use travel imagery carefully
+* feel modern SaaS
+
+Use:
+
+* Framer Motion
+* shadcn/ui
+* TailwindCSS v4
+
+---
+
+# RESPONSIVENESS
+
+The entire dashboard MUST:
+
+* work perfectly on mobile
+* support tablets
+* support desktop
+* avoid horizontal scrolling
+
+Mobile-first design is mandatory.
+
+---
+
+# SEARCH & FILTERS
+
+Add global search for:
+
+* bookings
+* trips
+* payments
+* conversations
+
+Include:
+
+* sorting
+* filtering
+* pagination
+
+---
+
+# STATE MANAGEMENT
+
+Use Zustand for:
+
+* auth state
+* trip state
+* notification state
+* wallet state
+* chat state
+
+---
+
+# API LAYER
+
+Create reusable Axios service layer.
+
+Example:
+
+```txt
+/lib/api/trips.ts
+/lib/api/payments.ts
+/lib/api/profile.ts
+```
+
+---
+
+# ACCESSIBILITY
+
+Ensure:
+
+* keyboard support
+* focus states
+* accessible contrast
+* screen reader support
+
+---
+
+# SECURITY REQUIREMENTS
+
+Protect:
+
+* payment data
+* travel documents
+* personal information
+* trip history
+
+Never expose:
+
+* internal IDs
+* document URLs
+* sensitive tokens
+
+Prepare secure architecture for:
+
+* PCI-sensitive future integrations
+* airline APIs
+* passport storage
+* visa workflows
+
+---
+
+# FUTURE-READY FEATURES
+
+Prepare architecture placeholders for:
+
+* loyalty programs
+* boarding passes
+* visa assistant
+* airport alerts
+* live trip tracking
+* WhatsApp notifications
+* AI copilot
+* trip sharing
+* collaborative trips
+
+---
+
+# IMPORTANT UX PHILOSOPHY
+
+The dashboard should NOT feel:
+
+* admin-heavy
+* enterprise-only
+* cluttered
+* form-centric
+
+Instead it should feel:
+
+* conversational
+* AI-guided
+* travel-focused
+* highly visual
+* calm and organized
+
+The user should immediately understand:
+
+* upcoming travel
+* payments due
+* recommendations
+* important alerts
+
+without searching.
+
+---
+
+# Final Requirements
+
+The generated implementation must:
+
+* compile successfully
+* include frontend + backend
+* include MongoDB integration
+* include responsive layouts
+* include reusable architecture
+* include clean TypeScript + Python code
+* include premium UI
+* include mobile-first layouts
+* include scalable folder structure
+* include API integration
+* include dashboard navigation
+* include organized travel sections
+
+Do NOT:
+
+* leave TODO comments
+* create placeholder fake APIs
+* generate incomplete components
+* generate broken routing
+
+Generate complete production-ready implementation.
+
+[1]: https://wptravel.io/features/customer-dashboard/?utm_source=chatgpt.com "Customer Dashboard: Manage Bookings Easily | WP Travel"
+[2]: https://help.squadtrip.com/en/articles/13920993-your-traveler-dashboard-payments-trips-and-receipts?utm_source=chatgpt.com "Your Traveler Dashboard — Payments, Trips, and Receipts | SquadTrip Help Center"
+[3]: https://support.travelperk.com/hc/en-us/articles/115007863787-Edit-your-personal-profile?utm_source=chatgpt.com "Edit your profile – Help center"

@@ -1,0 +1,840 @@
+# Claude Code Prompt — Implement AI-Native Travel Packages & Deals System for TravelAI
+
+Implement a premium AI-native travel packages and deals platform for TravelAI.
+
+This should become one of the core features of the platform.
+
+The experience should combine:
+
+* Expedia vacation package structure
+* Booking.com pricing clarity
+* Airbnb storytelling
+* AI-native conversational planning
+* modern Gen Z / Gen Alpha UX
+
+This is NOT a traditional “tour package website”.
+
+The experience should feel like:
+
+```txt
+an intelligent AI travel planner
+```
+
+that can:
+
+* recommend packages
+* personalize trips
+* customize itineraries
+* build trips conversationally
+* optimize budget automatically
+
+---
+
+# Main Goal
+
+Build a complete travel package ecosystem where users can:
+
+* browse curated packages
+* discover deals
+* customize trips
+* build packages with AI
+* compare package inclusions
+* save packages
+* chat with AI assistant
+* create custom itineraries
+* mix flights + hotels + activities
+
+The platform should support:
+
+* domestic India packages
+* international packages
+* honeymoon packages
+* family trips
+* solo trips
+* workations
+* luxury tours
+* budget trips
+* weekend getaways
+
+---
+
+# Tech Stack
+
+Frontend:
+
+* Next.js 16 App Router
+* TypeScript
+* React 19
+* TailwindCSS v4
+* shadcn/ui
+* Framer Motion
+* Zustand
+* Axios
+* Lucide React
+
+Backend:
+
+* FastAPI
+* MongoDB
+* Motor async driver
+* Pydantic models
+* OpenAI integration
+
+Infrastructure:
+
+* Railway deployment
+
+---
+
+# ROUTES
+
+Create:
+
+```txt
+/packages
+/packages/[packageId]
+/packages/customize/[packageId]
+/packages/create-with-ai
+/deals
+```
+
+---
+
+# PACKAGE TYPES
+
+The system must support multiple package structures.
+
+# TYPE 1 — Basic Package
+
+Includes:
+
+* Flights
+* Hotels
+
+---
+
+# TYPE 2 — Standard Package
+
+Includes:
+
+* Flights
+* Hotels
+* Airport Transfers
+* Local Transport
+* Breakfast
+
+---
+
+# TYPE 3 — Premium Package
+
+Includes:
+
+* Flights
+* Hotels
+* Breakfast + Dinner
+* Local Tours
+* Airport Pickup
+* Sightseeing
+* Activities
+
+---
+
+# TYPE 4 — Fully Custom AI Package
+
+Generated dynamically by AI.
+
+Users can:
+
+* talk to AI
+* describe trip naturally
+* modify itinerary conversationally
+
+Example:
+
+```txt
+I want a 5 day Goa trip under ₹25k with beach resort and nightlife
+```
+
+OR
+
+```txt
+Plan a romantic Switzerland honeymoon with scenic trains
+```
+
+The AI should generate:
+
+* destination suggestions
+* hotel suggestions
+* itinerary structure
+* estimated budget
+* transport suggestions
+
+---
+
+# MAIN PACKAGES PAGE
+
+Create premium package browsing experience.
+
+Inspired by:
+
+* Expedia vacation packages
+* Booking.com organization
+* Airbnb discoverability
+
+BUT modernized into:
+
+```txt
+AI-native travel discovery
+```
+
+---
+
+# PAGE LAYOUT
+
+Desktop:
+
+```txt
+--------------------------------
+Hero Search Section
+--------------------------------
+Trending Destinations
+--------------------------------
+Filters + Package Grid
+--------------------------------
+AI Recommendations
+--------------------------------
+```
+
+Mobile:
+
+* stacked cards
+* swipeable sections
+* sticky search
+* bottom sheet filters
+
+Use:
+
+```txt
+max-w-7xl mx-auto px-4
+```
+
+---
+
+# HERO SEARCH SECTION
+
+Create premium AI search section.
+
+Include:
+
+* destination input
+* duration
+* budget
+* travelers
+* package type
+
+AND conversational AI input.
+
+Example placeholder:
+
+```txt
+Try: “5 days Bali under ₹60k with beaches and cafes”
+```
+
+Include:
+
+* voice search placeholder
+* AI suggestions
+* trending searches
+
+---
+
+# PACKAGE CARDS
+
+VERY IMPORTANT.
+
+Package cards should feel:
+
+* highly visual
+* premium
+* modern
+* mobile-first
+
+Each package card should include:
+
+# TOP SECTION
+
+* destination imagery
+* duration badge
+* AI recommended badge
+* trending badge
+
+# MIDDLE SECTION
+
+* package title
+* destination list
+* short AI-generated summary
+
+Examples:
+
+```txt
+Perfect for couples & sunsets 🌅
+```
+
+```txt
+Best budget Europe starter trip ✈️
+```
+
+---
+
+# INCLUDED ITEMS SECTION
+
+Display inclusions clearly.
+
+Examples:
+
+* Flights Included
+* 4-Star Hotel
+* Breakfast Included
+* Local Tours
+* Airport Transfers
+* Visa Assistance
+
+Use:
+
+* modern icon system
+* chips/badges
+
+---
+
+# PRICING SECTION
+
+Show:
+
+* price per person
+* total package price
+* EMI placeholder
+* savings badge
+* discount badge
+
+Examples:
+
+```txt
+Save ₹12,000
+```
+
+```txt
+Flights + Hotels bundled
+```
+
+---
+
+# CTA BUTTONS
+
+Include:
+
+* View Details
+* Customize with AI
+* Save Package
+* Share
+
+---
+
+# PACKAGE DETAILS PAGE
+
+Create:
+
+```txt
+/packages/[packageId]
+```
+
+This should feel like:
+
+* Airbnb listing page
+* luxury travel landing page
+* itinerary workspace
+
+---
+
+# PACKAGE DETAILS SECTIONS
+
+Include:
+
+```txt
+Overview
+Itinerary
+Hotels
+Flights
+Transport
+Activities
+Meals
+Pricing
+Policies
+AI Insights
+Reviews
+FAQ
+```
+
+---
+
+# ITINERARY SECTION
+
+Create timeline-style itinerary.
+
+Examples:
+
+```txt
+Day 1 — Arrival + Beach Sunset
+Day 2 — Island Tour
+Day 3 — Free Exploration
+```
+
+Include:
+
+* collapsible sections
+* visual timeline
+* maps placeholder
+
+---
+
+# HOTEL SECTION
+
+Display:
+
+* hotel cards
+* amenities
+* ratings
+* room type
+* breakfast inclusion
+
+Use hotel card design consistency from hotel search module.
+
+---
+
+# FLIGHT SECTION
+
+Display:
+
+* airline
+* duration
+* baggage
+* timings
+* layovers
+
+Use flight card consistency from flight search module.
+
+---
+
+# AI INSIGHTS SECTION
+
+VERY IMPORTANT.
+
+Examples:
+
+```txt
+AI predicts prices may increase next month
+```
+
+```txt
+Most booked by couples from Mumbai
+```
+
+```txt
+Best season to visit: October–February
+```
+
+```txt
+Cheaper than booking separately by 18%
+```
+
+---
+
+# CUSTOMIZE WITH AI FLOW
+
+Create:
+
+```txt
+/packages/customize/[packageId]
+```
+
+This is one of the MOST IMPORTANT features.
+
+Users should be able to:
+
+* remove hotels
+* upgrade hotels
+* add sightseeing
+* change flights
+* increase/decrease duration
+* add meals
+* modify budget
+
+using:
+
+* conversational AI
+* natural language
+
+Examples:
+
+```txt
+Add a luxury hotel
+```
+
+```txt
+Remove breakfast and reduce cost
+```
+
+```txt
+Add desert safari
+```
+
+---
+
+# AI PACKAGE BUILDER
+
+Create:
+
+```txt
+/packages/create-with-ai
+```
+
+This should feel:
+
+* conversational
+* futuristic
+* AI-first
+
+NOT:
+
+```txt
+old form-based booking
+```
+
+---
+
+# AI CHAT EXPERIENCE
+
+The AI assistant should:
+
+* ask follow-up questions
+* understand preferences
+* recommend destinations
+* estimate costs
+* suggest upgrades
+* optimize budgets
+
+Example flow:
+
+```txt
+User:
+I want a family vacation in December under ₹1 lakh
+
+AI:
+Do you prefer beaches, mountains, or international destinations?
+```
+
+---
+
+# DEALS PAGE
+
+Create:
+
+```txt
+/deals
+```
+
+Display:
+
+* flash deals
+* seasonal offers
+* last-minute packages
+* trending destinations
+* AI-discovered deals
+
+Examples:
+
+```txt
+Dubai packages dropped 22% this week
+```
+
+```txt
+Cheapest Thailand packages this month
+```
+
+---
+
+# FILTER SYSTEM
+
+Include:
+
+* Budget
+* Duration
+* Domestic/International
+* Family/Couple/Solo
+* Adventure/Luxury/Budget
+* Visa Required
+* Meals Included
+* Flights Included
+* Cancellation Policy
+
+---
+
+# SORTING
+
+Support:
+
+* AI Recommended
+* Lowest Price
+* Trending
+* Best Rated
+* Best Value
+* Most Booked
+
+---
+
+# DATABASE MODELS
+
+Create:
+
+```python
+Package
+PackageDay
+PackageHotel
+PackageFlight
+PackageTransport
+PackageActivity
+PackagePricing
+PackageReview
+SavedPackage
+CustomPackageRequest
+AIConversation
+```
+
+---
+
+# BACKEND ARCHITECTURE
+
+Create:
+
+```txt
+/app/api/packages
+/app/api/deals
+/app/services/packages
+/app/services/ai_packages
+/app/models/packages
+```
+
+---
+
+# API ENDPOINTS
+
+Create:
+
+```txt
+GET /api/packages
+GET /api/packages/{id}
+POST /api/packages/customize
+POST /api/packages/create-with-ai
+GET /api/deals
+```
+
+---
+
+# FRONTEND ARCHITECTURE
+
+Create:
+
+```txt
+/app/packages
+/components/packages
+/components/deals
+/components/itinerary
+/components/ai-builder
+/store/packageStore.ts
+/lib/api/packages.ts
+```
+
+---
+
+# AI FEATURES
+
+Prepare architecture for:
+
+* AI personalization
+* budget optimization
+* itinerary generation
+* dynamic recommendations
+* conversational modifications
+* package scoring
+
+---
+
+# MOBILE EXPERIENCE
+
+VERY IMPORTANT.
+
+The entire package system must:
+
+* work perfectly on mobile
+* support swipe interactions
+* use large touch targets
+* support sticky booking CTA
+* avoid clutter
+
+Mobile-first mandatory.
+
+---
+
+# DESIGN SYSTEM
+
+The UI should feel:
+
+* premium
+* calm
+* visual
+* AI-native
+* travel-focused
+
+Use:
+
+* rounded-3xl cards
+* subtle gradients
+* smooth animations
+* clean typography
+* visual storytelling
+
+Use:
+
+* Framer Motion
+* TailwindCSS v4
+* shadcn/ui
+
+---
+
+# CONSISTENCY REQUIREMENTS
+
+Package pages MUST visually align with:
+
+* hotel search
+* flight search
+* future train/bus pages
+
+Maintain:
+
+* same search width
+* same spacing system
+* same card rhythm
+* same typography scale
+* same animation style
+
+---
+
+# LOADING STATES
+
+Implement:
+
+* skeleton cards
+* shimmer effects
+* itinerary loaders
+* AI thinking states
+
+---
+
+# EMPTY STATES
+
+Examples:
+
+```txt
+No matching packages found ✈️
+```
+
+```txt
+Try flexible dates for better deals
+```
+
+---
+
+# ACCESSIBILITY
+
+Ensure:
+
+* keyboard navigation
+* screen reader support
+* proper labels
+* accessible contrast
+
+---
+
+# FUTURE-READY FEATURES
+
+Prepare placeholders for:
+
+* visa assistance
+* group trips
+* collaborative planning
+* WhatsApp itinerary sharing
+* AI voice planner
+* live trip updates
+* loyalty points
+* payment plans
+* dynamic pricing
+
+---
+
+# IMPORTANT UX PHILOSOPHY
+
+Users should feel:
+
+```txt
+the AI is planning the trip with me
+```
+
+NOT:
+
+```txt
+I’m filling complicated travel forms
+```
+
+The system should reduce friction everywhere.
+
+Prioritize:
+
+* recommendations
+* storytelling
+* AI guidance
+* customization
+* visual exploration
+
+over:
+
+* endless filters
+* complicated booking steps
+
+---
+
+# Final Requirements
+
+The generated implementation must:
+
+* compile successfully
+* include frontend + backend
+* include MongoDB integration
+* include responsive layouts
+* include reusable architecture
+* include AI-ready architecture
+* include conversational flows
+* include package browsing
+* include itinerary system
+* include deals system
+* include clean TypeScript + Python code
+* include mobile-first design
+* include premium UI
+
+Do NOT:
+
+* leave TODO comments
+* create fake APIs
+* create broken layouts
+* create desktop-only experiences
+* generate outdated travel UI
+
+Generate complete production-ready implementation.

@@ -1,0 +1,461 @@
+# Additional Claude Code Prompt — Unified Travel Search UX System (Hotels + Flights + Future Modules)
+
+IMPORTANT:
+The hotel search experience MUST visually align with the flight search and future travel modules.
+
+The platform should feel like ONE intelligent AI-native travel system — not disconnected pages.
+
+However:
+
+* hotel search UX should still follow proven interaction patterns from world-class hotel platforms
+* flights should follow airline/travel aggregator patterns
+* buses/trains should align with their native expectations
+
+The design system must maintain:
+
+* consistent spacing
+* consistent card widths
+* consistent search bar sizing
+* consistent layout rhythm
+* consistent responsiveness
+* consistent mobile behavior
+
+while adapting intelligently to each travel vertical.
+
+---
+
+# OVERALL DESIGN PHILOSOPHY
+
+The entire TravelAI platform should feel:
+
+```txt id="1r3q5o"
+One AI travel operating system
+```
+
+NOT:
+
+```txt id="22bz5q"
+multiple disconnected booking pages
+```
+
+The user should immediately recognize:
+
+* search structure
+* card hierarchy
+* CTA placement
+* filters
+* layouts
+
+across:
+
+* hotels
+* flights
+* buses
+* trains
+* packages
+* AI recommendations
+
+---
+
+# GLOBAL SEARCH CONTAINER SYSTEM
+
+Create reusable layout system.
+
+ALL search pages MUST use:
+
+```txt id="p1gw0m"
+max-w-7xl mx-auto px-4
+```
+
+Create reusable:
+
+```txt id="jlwmsh"
+/components/layout/SearchLayout.tsx
+```
+
+Use this everywhere.
+
+---
+
+# GLOBAL CARD WIDTH SYSTEM
+
+VERY IMPORTANT.
+
+Search result cards across the platform should align visually.
+
+Examples:
+
+* hotel cards
+* flight cards
+* train cards
+* bus cards
+
+should all feel:
+
+* structurally consistent
+* visually balanced
+* part of same ecosystem
+
+---
+
+# CARD DESIGN RULES
+
+Use:
+
+* rounded-3xl
+* subtle shadows
+* consistent padding
+* identical outer spacing
+* aligned CTA zones
+* aligned pricing sections
+
+Card widths should remain visually consistent.
+
+---
+
+# HOTEL SEARCH UX REFERENCES
+
+Hotel search MUST draw inspiration from:
+
+* Booking.com
+* Expedia
+* Airbnb
+* Agoda
+
+Use best UX patterns from these platforms:
+
+* visual hierarchy
+* pricing clarity
+* image prominence
+* filters
+* review visibility
+* cancellation badges
+
+BUT modernize them into:
+
+```txt id="e1h9cb"
+AI-native UX
+```
+
+---
+
+# FLIGHT SEARCH UX REFERENCES
+
+Flight search should follow:
+
+* Google Flights
+* Skyscanner
+* Kayak
+
+Prioritize:
+
+* quick scanning
+* fare visibility
+* duration comparison
+* airline branding
+* AI price prediction
+
+---
+
+# UNIFIED SEARCH HEADER
+
+ALL travel search pages should share:
+
+* same top navigation
+* same search shell
+* same search sizing
+* same spacing system
+
+Create reusable:
+
+```txt id="ndjlwm"
+/components/search/GlobalSearchBar.tsx
+```
+
+This component should dynamically render:
+
+* flights
+* hotels
+* trains
+* buses
+
+while maintaining consistent sizing.
+
+---
+
+# SEARCH BAR HEIGHT CONSISTENCY
+
+The search bars across:
+
+* hotels
+* flights
+* trains
+* buses
+
+must have:
+
+* same height
+* same border radius
+* same typography
+* same spacing rhythm
+
+This is CRITICAL for brand consistency.
+
+---
+
+# RESPONSIVE BEHAVIOR
+
+On mobile:
+
+* search bars become stacked
+* filters become bottom sheets
+* cards become full-width
+* spacing remains identical
+
+Avoid:
+
+* random widths
+* inconsistent paddings
+* crowded layouts
+
+---
+
+# HOTEL SEARCH CARD ALIGNMENT
+
+Hotel cards should:
+
+* visually align with flight cards
+* use same outer container width
+* maintain same horizontal rhythm
+
+However:
+
+* hotel cards should be image-heavy
+* flight cards should be data-heavy
+
+The user should still feel:
+
+```txt id="87g3yf"
+same ecosystem
+```
+
+---
+
+# FLIGHT CARD ALIGNMENT
+
+Flight cards should:
+
+* match hotel card spacing
+* use same CTA placement style
+* use same hover animation language
+* use same typography scale
+
+---
+
+# AI SEARCH EXPERIENCE
+
+ALL search pages should support:
+
+* conversational summaries
+* AI recommendations
+* natural language prompts
+
+Examples:
+
+```txt id="jlwmn4"
+Cheap weekend hotels in Goa
+```
+
+```txt id="75p2s2"
+Fastest flights to Dubai under ₹20k
+```
+
+The AI summary UI must remain visually consistent across all travel verticals.
+
+---
+
+# DESIGN TOKEN SYSTEM
+
+Create reusable design tokens for:
+
+* spacing
+* typography
+* card sizes
+* border radius
+* shadows
+* animations
+
+Use:
+
+```txt id="ocbgvx"
+/styles/design-system.ts
+```
+
+OR Tailwind utility abstraction.
+
+---
+
+# COMPONENT REUSABILITY
+
+Create reusable:
+
+* SearchHeader
+* SearchFilters
+* SearchCardContainer
+* PriceDisplay
+* RatingBadge
+* AIRecommendationBadge
+* SearchSkeleton
+* EmptyState
+
+All verticals should reuse these.
+
+---
+
+# SEARCH RESULTS GRID SYSTEM
+
+Create consistent grid behavior.
+
+Desktop:
+
+```txt id="lvsn57"
+Filters Sidebar + Results
+```
+
+Mobile:
+
+```txt id="k42f5n"
+Single-column stack
+```
+
+This layout should remain identical across:
+
+* hotels
+* flights
+* trains
+* buses
+
+---
+
+# TYPOGRAPHY CONSISTENCY
+
+Use same typography hierarchy everywhere.
+
+Examples:
+
+* hotel name size
+* airline name size
+* pricing size
+* badge sizing
+
+must remain visually consistent.
+
+---
+
+# PRICING DISPLAY SYSTEM
+
+Create reusable pricing component.
+
+Must support:
+
+* taxes included
+* strike-through discounts
+* cashback
+* AI savings
+* promo pricing
+
+Same pricing UX across all modules.
+
+---
+
+# FILTER SYSTEM CONSISTENCY
+
+Filter UX across:
+
+* hotels
+* flights
+* buses
+* trains
+
+must feel related.
+
+Examples:
+
+* same checkbox styles
+* same filter drawer
+* same modal animations
+* same filter chips
+
+---
+
+# LOADING STATES
+
+Use unified skeleton system across all search pages.
+
+Avoid:
+
+* different loading patterns per page
+
+Create reusable:
+
+```txt id="jlwmkc"
+/components/skeletons
+```
+
+---
+
+# FUTURE MODULE SUPPORT
+
+The architecture should support future addition of:
+
+* visa search
+* packages
+* activities
+* airport transfers
+* AI itinerary builder
+
+without redesigning the system.
+
+---
+
+# IMPORTANT UX RULE
+
+Users should feel:
+
+```txt id="p7v1n6"
+everything belongs together
+```
+
+while still benefiting from:
+
+* hotel-specific UX patterns
+* flight-specific UX patterns
+
+This balance is VERY important.
+
+---
+
+# FINAL IMPLEMENTATION REQUIREMENTS
+
+Ensure:
+
+* consistent card sizing
+* consistent responsive layouts
+* consistent search bars
+* reusable components
+* premium modern UI
+* mobile-first design
+* AI-native feel
+* Booking.com-quality hotel UX
+* Google Flights-quality flight UX
+
+Do NOT:
+
+* create disconnected layouts
+* use inconsistent spacing
+* create different visual systems per module
+* create desktop-only experiences
+
+Generate a scalable unified travel design system implementation.
+
+This section needs to be added on search results. Add new tab for Hotels just like we have it for flights, trains, buses and cars

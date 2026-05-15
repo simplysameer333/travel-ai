@@ -1,0 +1,609 @@
+# Claude Code Prompt — Implement Secure TravelAI Registration System
+
+Implement a production-grade registration and email verification system for the TravelAI platform.
+
+The UI design should match the attached screenshot:
+
+* centered modern card
+* premium travel startup feel
+* mobile-first responsive
+* rounded corners
+* soft gradients
+* airline/travel-inspired premium UX
+* modern authentication experience
+
+The implementation MUST include both frontend and backend changes.
+
+---
+
+# Tech Stack
+
+Frontend:
+
+* Next.js 16 App Router
+* TypeScript
+* React 19
+* TailwindCSS v4
+* shadcn/ui
+* Zustand
+* Framer Motion
+* Axios
+* Clerk (existing)
+
+Backend:
+
+* FastAPI
+* Python 3
+* MongoDB with Motor async driver
+* Pydantic
+* FastAPI routers/services architecture
+
+Infrastructure:
+
+* Railway deployment
+* MongoDB Atlas / Railway MongoDB
+
+---
+
+# Main Goal
+
+Implement a secure airline-grade registration flow suitable for a travel platform.
+
+The registration system must:
+
+* follow security best practices
+* support email verification
+* support Google sign up
+* support activation links
+* support activation expiry
+* support audit logging
+* support rate limiting
+* support secure password policies
+* support fraud prevention basics
+
+The implementation should feel enterprise-grade while remaining clean and modern.
+
+---
+
+# FRONTEND REQUIREMENTS
+
+Create the following route:
+
+```txt
+/register
+```
+
+The page should closely match the attached screenshot.
+
+---
+
+# UI Requirements
+
+The registration card should include:
+
+* TravelAI logo
+
+* tagline:
+  SMART · CHEAP · FAST
+
+* heading:
+  Create your account
+
+* subheading:
+  Start exploring India's best travel deals
+
+---
+
+# Layout Requirements
+
+The page MUST:
+
+* be fully mobile responsive
+* center vertically and horizontally
+* use max-width container
+* have premium spacing
+* use subtle shadow
+* rounded-3xl card
+* soft travel-inspired gradients
+* smooth animations
+
+Use:
+
+```txt
+max-w-md mx-auto px-4
+```
+
+for mobile-first layout.
+
+---
+
+# Registration Form Fields
+
+Required:
+
+* Full name
+* Email address
+* Password
+* Confirm password
+
+Buttons:
+
+* Continue with Google
+* Create Account
+
+Links:
+
+* Sign in
+
+---
+
+# Password Requirements
+
+Enforce:
+
+* minimum 8 characters
+* uppercase required
+* lowercase required
+* number required
+* special character required
+
+Show live validation UI.
+
+Example:
+
+* ✓ One uppercase letter
+* ✓ One number
+
+---
+
+# UX Requirements
+
+Add:
+
+* loading states
+* disabled states
+* password visibility toggle
+* inline validation
+* error toasts
+* success states
+
+Use:
+
+* shadcn/ui form components
+* Framer Motion subtle animations
+
+---
+
+# BACKEND REQUIREMENTS
+
+Create full registration backend.
+
+Use FastAPI modular architecture.
+
+Create:
+
+```txt
+/app/api/auth
+/app/services/auth
+/app/models
+/app/utils/email
+```
+
+---
+
+# MongoDB User Schema
+
+Create user model with:
+
+```python
+id
+full_name
+email
+password_hash
+is_verified
+verification_token
+verification_expires_at
+created_at
+updated_at
+last_login_at
+google_auth
+status
+failed_attempts
+```
+
+---
+
+# Registration API
+
+Create endpoint:
+
+```txt
+POST /api/auth/register
+```
+
+Validation:
+
+* email uniqueness
+* password policy
+* valid email format
+* normalized email
+* trimmed fields
+
+Hash password using:
+
+* bcrypt
+
+NEVER store plain passwords.
+
+---
+
+# Email Verification System
+
+After successful registration:
+
+* generate secure verification token
+* store hashed token in DB
+* token expires after 24 hours
+* send activation email
+
+Verification endpoint:
+
+```txt
+GET /api/auth/verify-email?token=
+```
+
+Behavior:
+
+* verify token
+* activate account
+* mark is_verified=true
+* invalidate token after use
+
+If token expired:
+
+* show expired activation page
+* allow resend verification email
+
+---
+
+# Verification Security Requirements
+
+The verification system MUST:
+
+* use cryptographically secure tokens
+* expire after exactly 24 hours
+* invalidate after first use
+* prevent token replay attacks
+* prevent enumeration attacks
+
+Use:
+
+```python
+secrets.token_urlsafe()
+```
+
+---
+
+# Email Sending
+
+Create reusable email service.
+
+Use:
+
+* Resend OR SendGrid
+
+Preferred:
+
+* Resend
+
+Environment variables:
+
+```env
+RESEND_API_KEY=
+EMAIL_FROM=
+APP_URL=
+```
+
+---
+
+# Emails Required
+
+# 1. Welcome Email
+
+Send after registration.
+
+Subject:
+
+```txt
+Welcome to TravelAI ✈️
+```
+
+Content:
+
+* welcome message
+* AI travel positioning
+* verify email CTA
+
+---
+
+# 2. Verification Email
+
+Include:
+
+* activation button
+* expiry notice
+* support link
+* security notice
+
+Message:
+
+```txt
+This activation link expires in 24 hours.
+```
+
+---
+
+# 3. Verification Success Email
+
+Send after successful activation.
+
+---
+
+# Rate Limiting
+
+Implement rate limiting for:
+
+```txt
+/api/auth/register
+/api/auth/login
+/api/auth/resend-verification
+```
+
+Limits:
+
+* 5 requests per IP per 15 minutes
+
+Use:
+
+* slowapi OR custom middleware
+
+---
+
+# Fraud Prevention Basics
+
+Implement:
+
+* disposable email detection placeholder
+* suspicious IP logging placeholder
+* duplicate account detection by email
+* failed attempt tracking
+
+---
+
+# Airline / Travel Industry Registration Guidelines
+
+Follow modern travel platform account standards.
+
+The registration flow should:
+
+* verify identity through email ownership
+* require strong credentials
+* support future KYC integration
+* support secure session architecture
+* support audit logging
+* support consent logging
+
+Add fields:
+
+* accepted_terms
+* accepted_privacy_policy
+* marketing_opt_in
+
+Checkboxes required:
+
+* Terms acceptance
+* Privacy policy acceptance
+
+Store timestamps.
+
+---
+
+# Session Security
+
+Prepare architecture for:
+
+* JWT access tokens
+* refresh tokens
+* Clerk integration
+* secure cookies
+
+Even if not fully implemented yet.
+
+---
+
+# Frontend API Integration
+
+Use Axios service layer.
+
+Create:
+
+```txt
+/lib/api/auth.ts
+```
+
+Methods:
+
+* register()
+* verifyEmail()
+* resendVerification()
+
+---
+
+# Zustand Auth Store
+
+Create auth store:
+
+```txt
+/store/authStore.ts
+```
+
+Store:
+
+* user
+* loading
+* authenticated
+* verification status
+
+---
+
+# Email Verification Pages
+
+Create pages:
+
+```txt
+/verify-email
+/verify-success
+/verify-expired
+```
+
+The pages should:
+
+* look premium
+* match travel theme
+* mobile responsive
+
+---
+
+# Success UX
+
+After registration:
+
+* show “Check your email” screen
+* do NOT auto-login unverified users
+
+---
+
+# Accessibility Requirements
+
+Ensure:
+
+* keyboard navigation
+* proper labels
+* screen reader support
+* accessible color contrast
+
+---
+
+# Logging
+
+Create structured logs for:
+
+* registration attempts
+* failed verification
+* successful verification
+* resend requests
+
+---
+
+# Environment Variables
+
+Frontend:
+
+```env
+NEXT_PUBLIC_API_URL=
+```
+
+Backend:
+
+```env
+MONGO_URI=
+DATABASE_NAME=
+JWT_SECRET=
+RESEND_API_KEY=
+EMAIL_FROM=
+APP_URL=
+```
+
+---
+
+# Backend Dependencies
+
+Install:
+
+```bash
+pip install passlib[bcrypt]
+pip install python-jose
+pip install email-validator
+pip install slowapi
+pip install resend
+```
+
+---
+
+# Frontend Dependencies
+
+Install:
+
+```bash
+npm install react-hook-form
+npm install zod
+npm install @hookform/resolvers
+npm install sonner
+```
+
+---
+
+# Validation
+
+Use:
+
+* Zod frontend validation
+* Pydantic backend validation
+
+Validation must match on both frontend and backend.
+
+---
+
+# Important Security Rules
+
+NEVER:
+
+* expose raw DB IDs
+* expose password hashes
+* expose verification tokens in logs
+* reveal whether email already exists in unsafe way
+
+Use generic errors like:
+
+```txt
+Unable to create account.
+```
+
+---
+
+# Final Requirements
+
+The generated implementation must:
+
+* compile successfully
+* be production-grade
+* be mobile responsive
+* match the attached design
+* include backend APIs
+* include MongoDB integration
+* include email verification
+* include resend verification flow
+* include secure password handling
+* include proper error handling
+* include reusable architecture
+* include clean TypeScript + Python code
+
+Do NOT leave:
+
+* TODO comments
+* incomplete handlers
+* fake APIs
+* placeholder security logic
+
+Generate complete working code.
+

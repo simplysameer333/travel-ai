@@ -1,0 +1,605 @@
+# Claude Code Prompt — Implement Secure TravelAI Login System
+
+Implement a production-grade login and session authentication system for the TravelAI platform.
+
+The login page UI should closely match the attached screenshot:
+
+* centered premium authentication card
+* modern airline/travel startup feel
+* mobile-first responsive layout
+* smooth animations
+* clean typography
+* subtle gradients
+* polished user experience
+
+The implementation MUST include both frontend and backend changes.
+
+---
+
+# Tech Stack
+
+Frontend:
+
+* Next.js 16 App Router
+* TypeScript
+* React 19
+* TailwindCSS v4
+* shadcn/ui
+* Zustand
+* Framer Motion
+* Axios
+* Clerk (existing)
+
+Backend:
+
+* FastAPI
+* Python 3
+* MongoDB with Motor async driver
+* Pydantic
+* JWT authentication architecture
+
+Infrastructure:
+
+* Railway deployment
+* MongoDB Atlas / Railway MongoDB
+
+---
+
+# Main Goal
+
+Implement a secure airline-grade login flow suitable for a travel platform.
+
+The login system must:
+
+* support email/password login
+* support Google login
+* support secure sessions
+* support JWT token architecture
+* support refresh tokens
+* support account verification checks
+* support login audit logging
+* support rate limiting
+* support fraud detection basics
+* support forgot password flow
+* support secure cookie handling
+
+The implementation should feel enterprise-grade and production-ready.
+
+---
+
+# FRONTEND REQUIREMENTS
+
+Create route:
+
+```txt
+/login
+```
+
+The page should visually match the attached screenshot.
+
+---
+
+# UI Requirements
+
+The login card should include:
+
+* TravelAI logo
+
+* tagline:
+  SMART · CHEAP · FAST
+
+* heading:
+  Welcome back
+
+* subheading:
+  Sign in to continue your journey
+
+---
+
+# Layout Requirements
+
+The page MUST:
+
+* be fully responsive
+* mobile optimized
+* centered vertically and horizontally
+* use rounded premium card design
+* include subtle shadows
+* support dark/light future compatibility
+* maintain clean spacing
+
+Use:
+
+```txt
+max-w-md mx-auto px-4
+```
+
+---
+
+# Login Form Fields
+
+Required:
+
+* Email address
+* Password
+
+Buttons:
+
+* Continue with Google
+* Sign In
+
+Links:
+
+* Forgot password?
+* Register
+
+---
+
+# UX Requirements
+
+Add:
+
+* loading states
+* disabled submit states
+* password visibility toggle
+* inline validation
+* animated transitions
+* success/error toast notifications
+
+Use:
+
+* shadcn/ui components
+* Framer Motion animations
+
+---
+
+# LOGIN SECURITY REQUIREMENTS
+
+Implement airline/travel-grade authentication standards.
+
+The system MUST:
+
+* require verified email before login
+* block unverified accounts
+* support account lock after repeated failures
+* support IP logging
+* support secure token rotation
+* support session invalidation
+* support suspicious login detection placeholders
+
+---
+
+# BACKEND REQUIREMENTS
+
+Create authentication architecture:
+
+```txt
+/app/api/auth
+/app/services/auth
+/app/services/security
+/app/models
+/app/core/security
+```
+
+---
+
+# MongoDB User Schema Updates
+
+Ensure schema supports:
+
+```python
+failed_login_attempts
+last_failed_login
+locked_until
+last_login_at
+last_login_ip
+refresh_token_hash
+is_verified
+status
+```
+
+---
+
+# Login API
+
+Create endpoint:
+
+```txt
+POST /api/auth/login
+```
+
+Validation:
+
+* normalized email
+* password verification
+* verified account check
+* account status check
+* account lock check
+
+Use bcrypt password verification.
+
+---
+
+# JWT Architecture
+
+Implement:
+
+* short-lived access token
+* refresh token rotation
+* secure token generation
+
+Prepare architecture for:
+
+* Clerk integration
+* secure HTTP-only cookies
+* token revocation
+
+Suggested expirations:
+
+* Access Token → 15 minutes
+* Refresh Token → 7 days
+
+Use:
+
+```python
+python-jose
+```
+
+---
+
+# Secure Cookie Requirements
+
+Set:
+
+* HttpOnly
+* Secure
+* SameSite=Lax
+
+for refresh tokens.
+
+---
+
+# Rate Limiting
+
+Implement rate limiting for:
+
+```txt
+/api/auth/login
+/api/auth/forgot-password
+/api/auth/reset-password
+```
+
+Limits:
+
+* 5 attempts per 15 minutes per IP
+
+Use:
+
+* slowapi
+
+---
+
+# Failed Login Protection
+
+Implement:
+
+* failed login tracking
+* temporary account lock
+
+Rules:
+
+* 5 failed attempts
+* lock account for 15 minutes
+
+Return generic error messages.
+
+---
+
+# Generic Error Messages
+
+NEVER expose:
+
+* whether email exists
+* whether password is wrong
+
+Use:
+
+```txt
+Invalid email or password.
+```
+
+---
+
+# Unverified Email Handling
+
+If account not verified:
+
+* block login
+* show resend verification option
+
+Endpoint:
+
+```txt
+POST /api/auth/resend-verification
+```
+
+---
+
+# Forgot Password System
+
+Create complete password reset flow.
+
+Endpoints:
+
+```txt
+POST /api/auth/forgot-password
+POST /api/auth/reset-password
+```
+
+---
+
+# Reset Password Requirements
+
+Use:
+
+* secure reset tokens
+* token expiration = 1 hour
+* one-time token usage
+* hashed token storage
+
+After successful reset:
+
+* invalidate existing sessions
+* clear refresh tokens
+
+---
+
+# Email Sending
+
+Use:
+
+* Resend (preferred)
+
+Environment variables:
+
+```env
+RESEND_API_KEY=
+EMAIL_FROM=
+APP_URL=
+```
+
+---
+
+# Required Emails
+
+# 1. Login Alert Email
+
+Optional placeholder architecture for future suspicious login alerts.
+
+---
+
+# 2. Forgot Password Email
+
+Include:
+
+* secure reset button
+* expiry notice
+* support contact
+* security disclaimer
+
+Message:
+
+```txt
+This reset link expires in 1 hour.
+```
+
+---
+
+# 3. Password Changed Confirmation
+
+Send after successful password reset.
+
+---
+
+# Frontend API Layer
+
+Create:
+
+```txt
+/lib/api/auth.ts
+```
+
+Methods:
+
+* login()
+* logout()
+* forgotPassword()
+* resetPassword()
+* resendVerification()
+
+---
+
+# Zustand Auth Store
+
+Create:
+
+```txt
+/store/authStore.ts
+```
+
+Store:
+
+* user
+* accessToken
+* authenticated
+* loading
+* verification status
+
+---
+
+# Additional Pages
+
+Create:
+
+```txt
+/forgot-password
+/reset-password
+/check-email
+/account-locked
+```
+
+All pages must:
+
+* match premium travel theme
+* be mobile responsive
+* use consistent design system
+
+---
+
+# Authentication Middleware
+
+Prepare middleware architecture for:
+
+* protected routes
+* role checks
+* session validation
+
+Future-ready structure.
+
+---
+
+# Accessibility Requirements
+
+Ensure:
+
+* keyboard accessibility
+* proper labels
+* aria support
+* accessible contrast
+* focus states
+
+---
+
+# Logging Requirements
+
+Create structured logs for:
+
+* login success
+* failed login
+* account lock
+* password reset requests
+* suspicious login attempts
+
+---
+
+# Environment Variables
+
+Frontend:
+
+```env
+NEXT_PUBLIC_API_URL=
+```
+
+Backend:
+
+```env
+MONGO_URI=
+DATABASE_NAME=
+JWT_SECRET=
+JWT_REFRESH_SECRET=
+RESEND_API_KEY=
+EMAIL_FROM=
+APP_URL=
+```
+
+---
+
+# Backend Dependencies
+
+Install:
+
+```bash
+pip install passlib[bcrypt]
+pip install python-jose
+pip install email-validator
+pip install slowapi
+pip install resend
+```
+
+---
+
+# Frontend Dependencies
+
+Install:
+
+```bash
+npm install react-hook-form
+npm install zod
+npm install @hookform/resolvers
+npm install sonner
+```
+
+---
+
+# Validation
+
+Use:
+
+* Zod frontend validation
+* Pydantic backend validation
+
+Validation must match on frontend and backend.
+
+---
+
+# Security Rules
+
+NEVER:
+
+* expose password hashes
+* expose token values in logs
+* expose whether user exists
+* expose internal IDs
+
+Use secure generic messaging everywhere.
+
+---
+
+# Session Architecture
+
+Prepare clean architecture for:
+
+* JWT auth
+* refresh tokens
+* multi-device sessions
+* logout everywhere
+* future OAuth providers
+
+---
+
+# Final Requirements
+
+The generated implementation must:
+
+* compile successfully
+* be production-grade
+* include frontend + backend changes
+* include MongoDB integration
+* include JWT auth architecture
+* include secure login flow
+* include forgot password flow
+* include rate limiting
+* include account lock handling
+* include reusable architecture
+* include mobile responsiveness
+* match attached design closely
+* include clean TypeScript + Python code
+
+Do NOT leave:
+
+* TODO comments
+* incomplete endpoints
+* fake auth logic
+* placeholder security logic
+
+Generate complete working implementation.

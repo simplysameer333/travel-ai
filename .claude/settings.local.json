@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Recurse \"E:\\\\AI_Projects\\\\travel-ai\\\\backend\" | Where-Object { -not $_.PSIsContainer } | Select-Object FullName, Length | Format-Table -AutoSize)",
+      "WebFetch(domain:images.unsplash.com)",
+      "WebSearch",
+      "WebFetch(domain:unsplash.com)",
+      "Bash(npx tsc *)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(Start-Process powershell -ArgumentList \"-NoExit\", \"-Command\", \"Set-Location 'E:\\\\AI_Projects\\\\travel-ai\\\\frontend'; npm run dev\" -WindowStyle Normal)",
+      "PowerShell(Start-Process powershell -ArgumentList \"-NoExit\", \"-Command\", \"Set-Location 'E:\\\\AI_Projects\\\\travel-ai\\\\backend'; .\\\\venv\\\\Scripts\\\\activate; python main.py\" -WindowStyle Normal)",
+      "Bash(Get-ChildItem -Recurse -Filter \"*.tsx\" \"E:\\\\AI_Projects\\\\travel-ai\\\\frontend\\\\app\")",
+      "Bash(Select-Object FullName)",
+      "PowerShell(Get-ChildItem -Path \"E:\\\\AI_Projects\\\\travel-ai\" -Force | Select-Object Name, @{Name=\"Type\";Expression={if \\($_.PSIsContainer\\) {\"Dir\"} else {\"File\"}}} | Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem -Path \"E:\\\\AI_Projects\\\\travel-ai\\\\backend\" -Force | Select-Object Name, @{Name=\"Type\";Expression={if \\($_.PSIsContainer\\) {\"Dir\"} else {\"File\"}}} | Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem -Path \"E:\\\\AI_Projects\\\\travel-ai\\\\frontend\" -Force | Select-Object Name, @{Name=\"Type\";Expression={if \\($_.PSIsContainer\\) {\"Dir\"} else {\"File\"}}} | Format-Table -AutoSize)",
+      "WebFetch(domain:www.skyscanner.net)",
+      "WebFetch(domain:www.kayak.co.uk)",
+      "Bash(npx next *)",
+      "Bash(Get-ChildItem -Path \"E:\\\\AI_Projects\\\\travel-ai\\\\frontend\" -Recurse -Force)",
+      "Bash(Select-Object FullName, PSIsContainer)",
+      "Bash(Sort-Object FullName)",
+      "Bash(Get-ChildItem -Path \"E:\\\\AI_Projects\\\\travel-ai\\\\frontend\" -Directory)",
+      "Bash(Select-Object Name)",
+      "WebFetch(domain:uk.trip.com)",
+      "Bash(Get-ChildItem \"E:\\\\AI_Projects\\\\travel-ai\\\\\" | Select-Object Name, PSIsContainer *)",
+      "PowerShell(winget *)"
+    ]
+  }
+}
