@@ -15,8 +15,9 @@ import BusSearchBar     from '@/components/home/search/BusSearchBar'
 import CarSearchBar     from '@/components/home/search/CarSearchBar'
 import TrainSearchBar   from '@/components/home/search/TrainSearchBar'
 import { TopFilters }   from '@/components/search/filters/TopFilters'
+import { API_BASE_URL } from '@/lib/config'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8000'
+const BACKEND_URL = API_BASE_URL
 
 // ---------------------------------------------------------------------------
 // Transport tab config — add new modes here only
