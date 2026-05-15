@@ -1,12 +1,12 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, Suspense } from 'react'
 import { Bot, Send, Plane, RotateCcw, Bookmark } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { useChatStore } from '@/store/chatStore'
 import { useSearchParams } from 'next/navigation'
 
-export default function ChatPage() {
+function ChatInner() {
   const { user } = useAuthStore()
   const firstName = user?.full_name?.split(' ')[0] ?? 'there'
 
@@ -202,5 +202,13 @@ export default function ChatPage() {
         </div>
       </form>
     </div>
+  )
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense>
+      <ChatInner />
+    </Suspense>
   )
 }
