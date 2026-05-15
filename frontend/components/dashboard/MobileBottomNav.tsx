@@ -7,7 +7,7 @@ import { LayoutDashboard, Briefcase, Sparkles, Bot, UserCircle } from 'lucide-re
 const TABS = [
   { label: 'Home', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Trips', href: '/trips', icon: Briefcase },
-  { label: 'AI', href: '/chat', icon: Sparkles },
+  { label: 'Buddy', href: '/chat', icon: Sparkles },
   { label: 'Scout', href: '/alerts', icon: Bot },
   { label: 'Profile', href: '/profile', icon: UserCircle },
 ]

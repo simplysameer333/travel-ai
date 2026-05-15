@@ -6,7 +6,6 @@ import DestinationsSection from '@/components/home/DestinationsSection'
 import TravelThemesSection from '@/components/home/TravelThemesSection'
 import FeaturesSection from '@/components/home/FeaturesSection'
 import SocialProofSection from '@/components/home/SocialProofSection'
-import CTASection from '@/components/home/CTASection'
 
 export default function Home() {
   return (
@@ -19,7 +18,6 @@ export default function Home() {
       <TravelThemesSection />
       <FeaturesSection />
       <SocialProofSection />
-      <CTASection />
     </>
   )
 }

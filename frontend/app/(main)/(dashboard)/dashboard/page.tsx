@@ -62,7 +62,7 @@ const AI_RECS = [
 const QUICK_LINKS = [
   { label: 'Book a Flight', href: '/search',   color: 'from-sky-500 to-blue-600'      },
   { label: 'Bookings',       href: '/trips',    color: 'from-emerald-500 to-teal-600'  },
-  { label: 'AI Assistant',  href: '/chat',     color: 'from-violet-500 to-purple-600' },
+  { label: 'Travel Buddy',  href: '/chat',     color: 'from-violet-500 to-purple-600' },
   { label: 'Payments',      href: '/payments', color: 'from-amber-500 to-orange-600'  },
 ]
 

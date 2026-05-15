@@ -4,6 +4,7 @@ import { Toaster } from 'sonner'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import TravelBuddyWidget from '@/components/layout/TravelBuddyWidget'
 
 const geist = Geist({
   variable: '--font-geist-sans',
@@ -28,6 +29,7 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Footer />
         <Toaster position="top-center" richColors />
+        <TravelBuddyWidget />
       </body>
     </html>
   )

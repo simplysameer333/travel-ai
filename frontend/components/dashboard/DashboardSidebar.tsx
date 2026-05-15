@@ -73,7 +73,7 @@ const NAV = [
       { label: 'Saved Trips', href: '/saved', icon: Bookmark },
       { label: 'AI Scout', href: '/alerts', icon: Bot },
       { label: 'Travel Docs', href: '/profile/travel-documents', icon: FileText },
-      { label: 'AI Assistant', href: '/chat', icon: Sparkles },
+      { label: 'Travel Buddy', href: '/chat', icon: Sparkles, ai: true },
       { label: 'Notifications', href: '/notifications', icon: Bell },
     ],
   },
@@ -114,10 +114,10 @@ export default function DashboardSidebar({ onNavigate }: SidebarProps) {
       {/* Logo */}
       <div className="px-5 pt-6 pb-4 border-b border-white/8">
         <Link href="/dashboard" className="flex items-center gap-2.5" onClick={onNavigate}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-md shadow-sky-500/30">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-md shadow-violet-500/30">
             <Plane className="w-4 h-4 text-white" />
           </div>
-          <span className="text-base font-extrabold tracking-tight bg-gradient-to-r from-white via-sky-200 to-sky-400 bg-clip-text text-transparent">
+          <span className="text-base font-extrabold tracking-tight bg-gradient-to-r from-white via-violet-200 to-violet-400 bg-clip-text text-transparent">
             TravelAI
           </span>
         </Link>
@@ -155,6 +155,7 @@ export default function DashboardSidebar({ onNavigate }: SidebarProps) {
             <div className="space-y-0.5">
               {group.items.map(item => {
                 const active = isActive(item.href)
+                const isAI = 'ai' in item && item.ai
                 return (
                   <Link
                     key={item.href}
@@ -162,21 +163,25 @@ export default function DashboardSidebar({ onNavigate }: SidebarProps) {
                     onClick={onNavigate}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                       active
-                        ? 'bg-sky-500/20 text-sky-300 shadow-sm'
-                        : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                        ? isAI
+                          ? 'bg-violet-500/20 text-violet-200 shadow-sm shadow-violet-500/10'
+                          : 'bg-sky-500/20 text-sky-300 shadow-sm'
+                        : isAI
+                          ? 'text-violet-400/70 hover:bg-violet-500/10 hover:text-violet-300'
+                          : 'text-slate-400 hover:bg-white/5 hover:text-white'
                     }`}
                   >
-                    <item.icon className={`w-4 h-4 shrink-0 ${active ? 'text-sky-400' : ''}`} />
+                    <item.icon className={`w-4 h-4 shrink-0 ${active ? isAI ? 'text-violet-400' : 'text-sky-400' : ''}`} />
                     {item.label}
                     {item.label === 'Notifications' && (
                       <span className="ml-auto flex h-4 w-4 items-center justify-center rounded-full bg-sky-500 text-[10px] font-bold text-white">
                         3
                       </span>
                     )}
-                    {item.label === 'Price Alerts' && (
+                    {item.label === 'Travel Buddy' && (
                       <span className="ml-auto relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-60" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-60" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500" />
                       </span>
                     )}
                   </Link>

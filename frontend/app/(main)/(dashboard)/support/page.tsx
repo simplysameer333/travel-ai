@@ -14,7 +14,7 @@ const FAQS = [
   },
   {
     q: 'How does AI trip planning work?',
-    a: 'Our AI analyses your preferences, budget, and travel history to suggest optimised itineraries. Open the AI Assistant and describe your trip — it handles routing, timing and pricing.',
+    a: 'Our AI analyses your preferences, budget, and travel history to suggest optimised itineraries. Open Travel Buddy and describe your trip — it handles routing, timing and pricing.',
   },
   {
     q: 'Can I modify my booking after confirmation?',
