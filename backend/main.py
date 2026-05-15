@@ -83,6 +83,10 @@ async def shutdown_event() -> None:
 app.include_router(search_router)
 app.include_router(auth_router)
 
+@app.get("/health", tags=["Health"])
+async def health_check():
+    return {"status": "ok"}
+
 # ---------------------------------------------------------------------------
 # Dev entry-point
 # ---------------------------------------------------------------------------
