@@ -1,0 +1,687 @@
+# TravelAI — LangGraph-Based AI Agent Orchestrator Prompt for Claude Code
+
+Build a production-grade AI travel orchestration system for TravelAI using the latest stable LangGraph architecture.
+
+IMPORTANT:
+Use ONLY modern LangGraph APIs and patterns.
+Do NOT use deprecated LangChain agent patterns or legacy AgentExecutor architecture.
+
+Use latest stable LangGraph version:
+
+```txt id="yx0op4"
+langgraph==1.1.10
+```
+
+Avoid:
+
+```txt id="v0nl2g"
+1.2.x alpha versions
+```
+
+because they are still experimental. ([QWE AI Academy][1])
+
+LangGraph should be the PRIMARY orchestration engine for all AI workflows.
+
+---
+
+## PROJECT OVERVIEW
+
+TravelAI is an AI-native travel platform focused on Indian travelers.
+
+The platform supports:
+
+* Flights
+* Trains
+* Hotels
+* Buses
+* Cars
+* Holiday Packages
+* AI Itinerary Planning
+* Visa Guidance
+* Budget Optimization
+* Travel Recommendations
+
+Users can interact using:
+
+* natural language
+* conversational chat
+* structured forms
+* voice input (future-ready architecture)
+
+The AI should behave like:
+
+```txt id="58b22q"
+a premium intelligent travel consultant
+```
+
+NOT:
+
+* a generic chatbot
+* a single monolithic AI agent
+* a simple search assistant
+
+---
+
+## CORE ARCHITECTURE REQUIREMENT
+
+Build:
+
+```txt id="3wb51d"
+multi-agent graph orchestration system
+```
+
+using:
+
+* LangGraph StateGraph
+* modular specialized agents
+* conditional routing
+* checkpointing
+* durable execution
+* streaming responses
+* resumable workflows
+* async-first architecture
+
+This system must support:
+
+* long-running itineraries
+* multi-step planning
+* interruption/resume
+* retries
+* memory persistence
+* human approval flows
+* observability
+
+LangGraph is specifically designed for:
+
+```txt id="mksz5i"
+stateful multi-agent orchestration
+```
+
+and should be used as the core orchestration framework. ([Zylos][2])
+
+---
+
+## IMPORTANT LANGGRAPH REQUIREMENTS
+
+Use:
+
+* langgraph
+* langchain-core
+* langchain-openai
+
+Avoid:
+
+* legacy LangChain chains
+* AgentExecutor
+* old memory APIs
+* monolithic agents
+
+Architecture MUST use:
+
+* StateGraph
+* typed state
+* graph nodes
+* conditional edges
+* async node execution
+* parallel execution where applicable
+* graph checkpointing
+* streaming support
+
+Use:
+
+```python id="rgjmg4"
+StateGraph
+```
+
+as the central orchestration primitive.
+
+LangGraph production stability and checkpointing are critical for this project. ([Zylos][2])
+
+---
+
+## INTENT CLASSIFICATION SYSTEM
+
+Build a dedicated Intent Classification Node.
+
+The AI must classify user requests into:
+
+---
+
+## TYPE 1 — SIMPLE SEARCH
+
+Examples:
+
+* "Book flight Delhi to Goa"
+* "Train Mumbai to Jaipur"
+* "Cheap bus Bangalore to Chennai"
+
+Meaning:
+single transport mode only
+
+Invoke:
+
+* flights_agent
+  OR
+* trains_agent
+  OR
+* buses_agent
+  OR
+* cars_agent
+
+Do NOT invoke full itinerary planner.
+
+---
+
+## TYPE 2 — TRIP PLANNING
+
+Examples:
+
+* "Plan Goa trip from Delhi"
+* "Family trip to Kerala"
+* "Weekend in Manali"
+
+Meaning:
+user wants travel recommendations and planning.
+
+Invoke:
+
+* flights_agent
+* trains_agent
+* hotels_agent
+* packages_agent
+* recommendation_agent
+* budget_agent
+
+The AI should:
+
+* compare travel modes
+* compare costs
+* recommend hotels
+* recommend packages
+* optimize convenience
+
+---
+
+## TYPE 3 — FULL AI ITINERARY
+
+Examples:
+
+* "Plan a 10-day China trip from Delhi"
+* "Luxury Bali honeymoon"
+* "Europe backpacking itinerary"
+
+Meaning:
+full AI concierge experience.
+
+Invoke:
+
+* itinerary_agent
+* visa_agent
+* flights_agent
+* hotels_agent
+* packages_agent
+* recommendation_agent
+* budget_agent
+* local_experience_agent
+
+Generate:
+
+* day-by-day itinerary
+* city sequencing
+* route optimization
+* budget estimation
+* visa guidance
+* hotel suggestions
+* transport planning
+* sightseeing recommendations
+* local experiences
+
+---
+
+## MULTI-AGENT REQUIREMENT
+
+DO NOT build:
+
+```txt id="3j0r4m"
+one giant AI agent
+```
+
+Build:
+
+```txt id="6gfr7j"
+multiple specialized travel agents
+```
+
+Required agents:
+
+agents/
+├── orchestrator_agent/
+├── intent_classifier_agent/
+├── flights_agent/
+├── trains_agent/
+├── hotels_agent/
+├── buses_agent/
+├── cars_agent/
+├── packages_agent/
+├── itinerary_agent/
+├── recommendation_agent/
+├── budget_agent/
+├── visa_agent/
+├── deals_agent/
+├── alerts_agent/
+├── local_experience_agent/
+├── travel_rules_agent/
+
+LangGraph excels at:
+
+```txt id="rwlvba"
+specialized graph-based orchestration
+```
+
+for multi-agent systems. ([Zylos][2])
+
+---
+
+## ORCHESTRATOR GRAPH FLOW
+
+Implement graph workflow:
+
+```txt id="cmk9oz"
+User Query
+    ↓
+Intent Classification
+    ↓
+Conditional Routing
+    ↓
+Specialized Agents
+    ↓
+Recommendation Merger
+    ↓
+Response Formatter
+```
+
+The orchestrator must:
+
+* route intelligently
+* merge outputs
+* rank recommendations
+* handle retries
+* support streaming
+* support interruption/resume
+
+---
+
+## LANGGRAPH CHECKPOINTING
+
+Implement:
+
+* persistent checkpoints
+* resumable workflows
+* state restoration
+* conversation continuation
+
+Use:
+
+* MongoDB
+  OR
+* Postgres checkpoint backend
+
+Checkpointing is critical because travel planning workflows are:
+
+```txt id="jlwmwq"
+long-running and stateful
+```
+
+LangGraph checkpointing should support:
+
+* pause/resume
+* itinerary continuation
+* partial trip refinement
+* approval flows
+
+Checkpointing and durable execution are key LangGraph production features. ([Zylos][2])
+
+---
+
+## MEMORY REQUIREMENTS
+
+Implement:
+
+1. short-term conversation memory
+2. long-term travel preferences
+3. saved itineraries
+4. user budget preferences
+5. preferred airlines/hotels
+
+Memory should support:
+
+* personalization
+* trip continuity
+* recommendation quality
+
+---
+
+## PACKAGE RECOMMENDATION SYSTEM
+
+Support travel packages containing:
+
+* flights
+* hotels
+* breakfast
+* transfers
+* sightseeing
+* local tours
+* dinners
+* activities
+* guides
+
+Example package support:
+
+* Dubai
+* Bali
+* Thailand
+* Europe
+* Kerala
+* Rajasthan
+
+Package engine should support:
+
+* inclusions
+* exclusions
+* excursions
+* optional upgrades
+* dynamic pricing
+* cancellation rules
+
+---
+
+## AI DECISION ENGINE
+
+The AI should optimize:
+
+* budget
+* comfort
+* travel fatigue
+* travel duration
+* convenience
+* experience quality
+
+The AI should explain:
+
+* WHY recommendations are good
+* WHY one transport mode is better
+* WHY package saves money
+
+---
+
+## SCORING ENGINE
+
+Build recommendation scoring using:
+
+* user preferences
+* budget fit
+* travel duration
+* convenience
+* review score
+* package savings
+* seasonality
+* route quality
+* layover quality
+
+---
+
+## LANGGRAPH NODE REQUIREMENTS
+
+Every graph node should:
+
+* be modular
+* async-first
+* independently testable
+* typed with Pydantic
+* observable
+* retry-safe
+
+Support:
+
+* parallel execution
+* streaming events
+* event tracing
+* graph visualization
+
+---
+
+## OBSERVABILITY
+
+Integrate:
+
+* LangSmith tracing
+* graph execution tracing
+* node-level monitoring
+* AI response logging
+* token tracking
+* retry tracking
+
+LangGraph + LangSmith observability is important for production debugging. ([Reddit][3])
+
+---
+
+## SECURITY REQUIREMENTS
+
+IMPORTANT:
+Treat ALL user input as untrusted.
+
+Implement:
+
+* strict tool input validation
+* prompt sanitization
+* metadata sanitization
+* safe checkpoint handling
+* no unsafe deserialization
+
+Avoid:
+
+* arbitrary code execution
+* unsafe pickle/msgpack usage
+* unsafe checkpoint restoration
+
+Recent LangGraph/LangChain vulnerabilities require strict validation and secure checkpoint handling. ([TechRadar][4])
+
+---
+
+## FRONTEND REQUIREMENTS
+
+Frontend:
+
+* Next.js 16
+* TypeScript
+* Tailwind v4
+* shadcn/ui
+
+Required pages:
+
+* /ai-agent
+* /packages
+* /search
+* /deals
+* /trips
+* /itinerary/[id]
+
+AI chat interface should support:
+
+* streaming responses
+* conversational UX
+* recommendation cards
+* package cards
+* itinerary timeline
+* expandable day planner
+* budget breakdown
+* transport comparison
+
+UI must be:
+
+* mobile-first
+* centered layout
+* modern AI-native aesthetic
+* clean and premium
+* inspired by premium travel websites
+
+---
+
+## BACKEND REQUIREMENTS
+
+Backend:
+
+* FastAPI
+* Python 3.12+
+* async architecture
+* uvicorn
+* Motor MongoDB driver
+
+Suggested structure:
+
+backend/app/
+├── agents/
+├── graph/
+├── nodes/
+├── workflows/
+├── tools/
+├── prompts/
+├── memory/
+├── checkpoints/
+├── routers/
+├── services/
+├── models/
+├── schemas/
+├── state/
+├── observability/
+
+---
+
+## DATABASE REQUIREMENTS
+
+MongoDB collections:
+
+* users
+* trips
+* itineraries
+* packages
+* recommendations
+* alerts
+* conversations
+* checkpoints
+* budgets
+* saved_routes
+
+---
+
+## API REQUIREMENTS
+
+Create APIs:
+
+POST /api/ai/chat
+POST /api/ai/plan-trip
+POST /api/ai/generate-itinerary
+POST /api/ai/recommend-package
+POST /api/ai/compare-transport
+POST /api/ai/budget-estimate
+
+Support:
+
+* streaming
+* async responses
+* partial graph updates
+
+---
+
+## RESPONSE QUALITY
+
+Responses should feel:
+
+* premium
+* personalized
+* intelligent
+* practical
+* concise
+* action-oriented
+
+Avoid:
+
+* robotic lists
+* generic itineraries
+* repetitive explanations
+
+The AI should feel like:
+
+```txt id="ebxxh1"
+an elite AI travel consultant
+```
+
+---
+
+## IMPORTANT BUSINESS LOGIC
+
+Rules:
+
+* trips > 2 nights → prioritize packages
+* family trips → prioritize convenience
+* backpacking → prioritize budget
+* honeymoon → prioritize experience
+* weekend trips → prioritize fastest routes
+* flexible dates → recommend fare alerts
+* long domestic routes → compare flight vs train
+
+---
+
+## DEPLOYMENT REQUIREMENTS
+
+Deployment target:
+
+* Railway
+
+Support:
+
+* frontend service
+* backend service
+* MongoDB
+* environment variables
+* streaming support
+* horizontal scalability
+
+---
+
+## FINAL REQUIREMENTS
+
+Generate:
+
+1. LangGraph orchestration architecture
+2. StateGraph implementation
+3. graph nodes
+4. conditional routing
+5. specialized agents
+6. FastAPI APIs
+7. MongoDB schemas
+8. frontend AI UI
+9. streaming chat
+10. checkpointing architecture
+11. memory system
+12. observability setup
+13. Railway deployment config
+14. scalable folder structure
+15. production-ready codebase
+
+Everything should be:
+
+* modular
+* scalable
+* async-first
+* production-grade
+* mobile-first
+* AI-native
+* future-proof
+
+Use latest stable LangGraph production patterns only.
+
+[1]: https://www.qwe.edu.pl/ai-tools/langgraph-agent-orchestration-deployment/?utm_source=chatgpt.com "LangGraph 1.1 Setup: Agent Orchestration That Persists | QWE AI Academy"
+[2]: https://zylos.ai/research/2026-04-14-graph-based-agent-workflow-orchestration-production?utm_source=chatgpt.com "Graph-Based Agent Workflow Orchestration in Production: The 2026 Landscape | Zylos Research"
+[3]: https://www.reddit.com/r/LangChain/comments/1sljcjj/building_a_runtime_layer_for_langgraph_runs/?utm_source=chatgpt.com "Building a runtime layer for LangGraph runs"
+[4]: https://www.techradar.com/pro/security/each-vulnerability-exposes-a-different-class-of-enterprise-data-langchain-framework-hit-by-several-worrying-security-issues-heres-what-we-know?utm_source=chatgpt.com "'Each vulnerability exposes a different class of enterprise data': LangChain framework hit by several worrying security issues - here's what we know"

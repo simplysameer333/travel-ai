@@ -18,9 +18,14 @@ function ChatInner() {
   const { user } = useAuthStore()
   const firstName = user?.full_name?.split(' ')[0] ?? 'there'
 
-  const { messages, loading, addMessage, startStreamingMessage, appendToken, setLoading, reset } = useChatStore()
-  const bottomRef = useRef<HTMLDivElement>(null)
-  const inputRef  = useRef<HTMLInputElement>(null)
+  const {
+    messages, loading, sessionId,
+    addMessage, startStreamingMessage, appendToken,
+    setLoading, setStatus, reset,
+  } = useChatStore()
+
+  const bottomRef   = useRef<HTMLDivElement>(null)
+  const inputRef    = useRef<HTMLInputElement>(null)
   const initialised = useRef(false)
   const searchParams = useSearchParams()
 
@@ -32,21 +37,18 @@ function ChatInner() {
     if (messages.length === 0) reset(greeting)
     const q = searchParams.get('q')
     if (q) sendMessage(q)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Lock scroll on body while chat is mounted
+  // Lock body scroll while chat is mounted
   useEffect(() => {
     const html = document.documentElement
     const body = document.body
-    const prevHtml = html.style.overflow
-    const prevBody = body.style.overflow
+    const ph = html.style.overflow
+    const pb = body.style.overflow
     html.style.overflow = 'hidden'
     body.style.overflow = 'hidden'
-    return () => {
-      html.style.overflow = prevHtml
-      body.style.overflow = prevBody
-    }
+    return () => { html.style.overflow = ph; body.style.overflow = pb }
   }, [])
 
   useEffect(() => {
@@ -59,7 +61,6 @@ function ChatInner() {
 
     addMessage({ role: 'user', content: text.trim() })
 
-    // Collect full conversation to send as context
     const history = [
       ...messages.map(m => ({ role: m.role, content: m.content })),
       { role: 'user' as const, content: text.trim() },
@@ -71,10 +72,9 @@ function ChatInner() {
       history,
       (token) => appendToken(streamId, token),
       ()      => setLoading(false),
-      (err)   => {
-        appendToken(streamId, err)
-        setLoading(false)
-      },
+      (err)   => { appendToken(streamId, err); setLoading(false) },
+      (status) => setStatus(status),
+      sessionId,
     )
   }
 
@@ -88,7 +88,7 @@ function ChatInner() {
   return (
     <div className="fixed top-[84px] left-0 right-0 bottom-16 md:left-64 md:bottom-0 flex flex-col bg-white overflow-hidden z-20">
 
-      {/* ── Header ─────────────────────────────────────────────────── */}
+      {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-white shrink-0">
         <div className="flex items-center gap-3">
           <div className="relative shrink-0">
@@ -114,7 +114,7 @@ function ChatInner() {
         </button>
       </div>
 
-      {/* ── Messages ────────────────────────────────────────────────── */}
+      {/* ── Messages ────────────────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-4 bg-slate-50 no-scrollbar">
         {messages.map(msg => (
           <div key={msg.id} className={`flex gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -135,7 +135,6 @@ function ChatInner() {
                   : 'bg-white border border-slate-100 text-slate-800 shadow-sm rounded-tl-sm'
               }`}>
                 {msg.content}
-                {/* Blinking cursor while this message is streaming */}
                 {loading && msg.id.startsWith('stream-') && msg === messages[messages.length - 1] && (
                   <span className="inline-block w-0.5 h-4 bg-violet-400 animate-pulse ml-0.5 align-middle" />
                 )}
@@ -152,7 +151,7 @@ function ChatInner() {
           </div>
         ))}
 
-        {/* Typing dots — only while waiting for the first token */}
+        {/* Typing dots — only while waiting for first token */}
         {loading && messages[messages.length - 1]?.content === '' && (
           <div className="flex gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shrink-0 mt-0.5">
@@ -170,7 +169,7 @@ function ChatInner() {
         <div ref={bottomRef} />
       </div>
 
-      {/* ── Suggestions ─────────────────────────────────────────────── */}
+      {/* ── Suggestions ─────────────────────────────────────────────────── */}
       {messages.length <= 1 && (
         <div className="px-4 py-2.5 bg-white border-t border-slate-100 shrink-0">
           <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-2">Try asking</p>
@@ -188,7 +187,7 @@ function ChatInner() {
         </div>
       )}
 
-      {/* ── Input ───────────────────────────────────────────────────── */}
+      {/* ── Input ───────────────────────────────────────────────────────── */}
       <form
         onSubmit={handleSubmit}
         className="px-4 py-3 bg-white border-t border-slate-100 shrink-0"

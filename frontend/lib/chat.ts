@@ -6,29 +6,32 @@ export interface ChatMsg {
 }
 
 /**
- * Stream a Travel Buddy response via SSE.
- * Calls onToken for each token, onDone when complete, onError on failure.
+ * Stream an AI Scout response via SSE.
+ * Calls onStatus for node-level progress updates (e.g. "Searching flights..."),
+ * onToken for each streamed response token, onDone when complete, onError on failure.
  */
 export async function streamChat(
   messages: ChatMsg[],
   onToken: (token: string) => void,
   onDone: () => void,
   onError: (err: string) => void,
+  onStatus?: (status: string) => void,
+  sessionId?: string,
 ): Promise<void> {
   let response: Response
   try {
     response = await fetch(`${API_BASE_URL}/api/chat/stream`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages }),
+      body: JSON.stringify({ messages, session_id: sessionId ?? null }),
     })
   } catch {
-    onError('Could not reach Travel Buddy. Please check your connection.')
+    onError('Could not reach AI Scout. Please check your connection.')
     return
   }
 
   if (!response.ok) {
-    onError(`Travel Buddy returned an error (${response.status}). Please try again.`)
+    onError(`AI Scout returned an error (${response.status}). Please try again.`)
     return
   }
 
@@ -44,7 +47,7 @@ export async function streamChat(
 
     buffer += decoder.decode(value, { stream: true })
     const lines = buffer.split('\n')
-    buffer = lines.pop() ?? ''  // keep incomplete last line for next chunk
+    buffer = lines.pop() ?? ''
 
     for (const line of lines) {
       if (!line.startsWith('data: ')) continue
@@ -52,8 +55,9 @@ export async function streamChat(
       if (data === '[DONE]') { onDone(); return }
       try {
         const parsed = JSON.parse(data)
-        if (parsed.token) onToken(parsed.token)
-        if (parsed.error) { onError(parsed.error); return }
+        if (parsed.token)  onToken(parsed.token)
+        if (parsed.status) onStatus?.(parsed.status)
+        if (parsed.error)  { onError(parsed.error); return }
       } catch {
         // ignore malformed SSE lines
       }

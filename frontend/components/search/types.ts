@@ -1,5 +1,5 @@
-export type Intent = 'flight' | 'hotel' | 'train' | 'bus' | 'car'
-export type TransportTab = 'flight' | 'hotel' | 'train' | 'bus' | 'car'
+export type Intent = 'flight' | 'hotel' | 'train' | 'bus' | 'car' | 'package'
+export type TransportTab = 'flight' | 'hotel' | 'train' | 'bus' | 'car' | 'package'
 export type SortKey = 'cheapest' | 'best' | 'quickest'
 export type ResultRow = Record<string, unknown>
 

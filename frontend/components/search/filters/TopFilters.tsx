@@ -59,6 +59,10 @@ export interface TopFilterProps {
   // car
   selectedCarCategories: string[]
   onToggleCarCategory: (c: string) => void
+
+  // package
+  selectedPackageTypes: string[]
+  onTogglePackageType: (t: string) => void
 }
 
 // ── flight top filters ────────────────────────────────────────────────────────
@@ -192,15 +196,37 @@ function CarTopFilters({
   )
 }
 
+// ── package top filters ───────────────────────────────────────────────────────
+
+const PACKAGE_STYLES = ['Adventure', 'Beach', 'Cultural', 'Honeymoon', 'Family', 'Luxury', 'Budget']
+
+function PackageTopFilters({
+  results, selectedPackageTypes, onTogglePackageType,
+}: Pick<TopFilterProps, 'results' | 'selectedPackageTypes' | 'onTogglePackageType'>) {
+  const available = PACKAGE_STYLES.filter(s => results.some(r => r.trip_style === s || r.type === s))
+  const show = available.length > 0 ? available : PACKAGE_STYLES.slice(0, 5)
+  return (
+    <>
+      <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider shrink-0">Trip Style</span>
+      {show.map(s => (
+        <Pill key={s} active={selectedPackageTypes.includes(s)} onClick={() => onTogglePackageType(s)}>
+          {s}
+        </Pill>
+      ))}
+    </>
+  )
+}
+
 // ── main export ───────────────────────────────────────────────────────────────
 
 export function TopFilters(props: TopFilterProps) {
   return (
     <div className="flex items-center gap-2 overflow-x-auto py-2 px-1 scrollbar-hide">
-      {props.tab === 'flight' && <FlightTopFilters {...props} />}
-      {props.tab === 'train'  && <TrainTopFilters  {...props} />}
-      {props.tab === 'bus'    && <BusTopFilters    {...props} />}
-      {props.tab === 'car'    && <CarTopFilters    {...props} />}
+      {props.tab === 'flight'  && <FlightTopFilters  {...props} />}
+      {props.tab === 'train'   && <TrainTopFilters   {...props} />}
+      {props.tab === 'bus'     && <BusTopFilters     {...props} />}
+      {props.tab === 'car'     && <CarTopFilters     {...props} />}
+      {props.tab === 'package' && <PackageTopFilters {...props} />}
     </div>
   )
 }

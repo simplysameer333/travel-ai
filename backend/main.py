@@ -10,6 +10,7 @@ from slowapi.errors import RateLimitExceeded
 from app.api.routes import router as search_router
 from app.api.auth import router as auth_router
 from app.api.chat import router as chat_router
+from app.routers.ai_router import router as ai_router
 from app.core.limiter import limiter
 from app.db.database import close_mongo_connection, connect_to_mongo, db
 
@@ -30,7 +31,7 @@ logging.basicConfig(
 app = FastAPI(
     title="Travel AI API",
     description="AI-powered travel search and planning API for Indian destinations.",
-    version="1.0.0",
+    version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -44,8 +45,6 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ---------------------------------------------------------------------------
 # CORS
-# Dev:  ALLOWED_ORIGINS unset  → "*" (no credentials required)
-# Prod: set ALLOWED_ORIGINS=https://frontend.up.railway.app
 # ---------------------------------------------------------------------------
 
 _origins_env = os.getenv("ALLOWED_ORIGINS", "*").strip()
@@ -66,11 +65,19 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event() -> None:
     await connect_to_mongo()
-    # Ensure unique index on email — idempotent, safe to call every start
+
+    # Unique email index — idempotent
     try:
         await db["users"].create_index("email", unique=True)
     except Exception:
-        pass  # index may already exist
+        pass
+
+    # Initialise the multi-agent LangGraph graph (+ checkpointer)
+    try:
+        from app.graph.travel_graph import init_travel_graph
+        await init_travel_graph()
+    except Exception as exc:
+        logging.getLogger(__name__).warning("Graph init deferred: %s", exc)
 
 
 @app.on_event("shutdown")
@@ -84,10 +91,11 @@ async def shutdown_event() -> None:
 app.include_router(search_router)
 app.include_router(auth_router)
 app.include_router(chat_router)
+app.include_router(ai_router)
 
 @app.get("/health", tags=["Health"])
 async def health_check():
-    return {"status": "ok"}
+    return {"status": "ok", "version": "2.0.0"}
 
 # ---------------------------------------------------------------------------
 # Dev entry-point

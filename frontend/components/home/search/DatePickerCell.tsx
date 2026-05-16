@@ -108,12 +108,12 @@ export default function DatePickerCell({ label, value, min = '', onChange, iconC
       {/* ── Trigger ── */}
       <button
         onClick={() => setOpen(v => !v)}
-        className="flex items-center gap-2 px-3 py-2.5 hover:bg-white/[0.06] transition-colors h-full w-full"
+        className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:py-2.5 hover:bg-white/[0.06] transition-colors h-full w-full"
       >
-        <Calendar className={`w-3.5 h-3.5 ${iconColor} shrink-0`} />
+        <Calendar className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${iconColor} shrink-0`} />
         <div className="text-left">
           <div className={micro}>{label}</div>
-          <div className={`text-sm font-semibold whitespace-nowrap ${value ? 'text-white' : 'text-white/40'}`}>
+          <div className={`text-xs sm:text-sm font-semibold whitespace-nowrap ${value ? 'text-white' : 'text-white/40'}`}>
             {display || 'Select date'}
           </div>
         </div>

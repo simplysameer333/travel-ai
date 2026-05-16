@@ -4,18 +4,20 @@ import { useEffect, useState, useCallback, Suspense, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import {
   Sparkles, Loader2, AlertCircle, SlidersHorizontal,
-  Search as SearchIcon, TrendingDown, Plane, Train, Bus, Car, Hotel,
+  Search as SearchIcon, TrendingDown, Plane, Train, Bus, Car, Hotel, Package,
 } from 'lucide-react'
 import type { Intent, TransportTab, SortKey, AIResponse } from '@/components/search/types'
 import { ResultCard } from '@/components/search/cards/ResultCard'
 import { SearchFilters } from '@/components/search/filters/SearchFilters'
-import FlightSearchBar  from '@/components/home/search/FlightSearchBar'
-import HotelSearchBar   from '@/components/home/search/HotelSearchBar'
-import BusSearchBar     from '@/components/home/search/BusSearchBar'
-import CarSearchBar     from '@/components/home/search/CarSearchBar'
-import TrainSearchBar   from '@/components/home/search/TrainSearchBar'
-import { TopFilters }   from '@/components/search/filters/TopFilters'
-import { API_BASE_URL } from '@/lib/config'
+import FlightSearchBar   from '@/components/home/search/FlightSearchBar'
+import HotelSearchBar    from '@/components/home/search/HotelSearchBar'
+import BusSearchBar      from '@/components/home/search/BusSearchBar'
+import CarSearchBar      from '@/components/home/search/CarSearchBar'
+import TrainSearchBar    from '@/components/home/search/TrainSearchBar'
+import PackageSearchBar  from '@/components/home/search/PackageSearchBar'
+import { TopFilters }            from '@/components/search/filters/TopFilters'
+import { API_BASE_URL }          from '@/lib/config'
+import { useSearchHistoryStore } from '@/store/searchHistoryStore'
 
 const BACKEND_URL = API_BASE_URL
 
@@ -24,11 +26,12 @@ const BACKEND_URL = API_BASE_URL
 // ---------------------------------------------------------------------------
 
 const TRANSPORT_TABS: { id: TransportTab; label: string; Icon: typeof Plane }[] = [
-  { id: 'flight', label: 'Flights', Icon: Plane },
-  { id: 'hotel',  label: 'Hotels',  Icon: Hotel },
-  { id: 'train',  label: 'Trains',  Icon: Train },
-  { id: 'bus',    label: 'Buses',   Icon: Bus   },
-  { id: 'car',    label: 'Cars',    Icon: Car   },
+  { id: 'flight',  label: 'Flights',  Icon: Plane   },
+  { id: 'hotel',   label: 'Hotels',   Icon: Hotel   },
+  { id: 'train',   label: 'Trains',   Icon: Train   },
+  { id: 'bus',     label: 'Buses',    Icon: Bus     },
+  { id: 'car',     label: 'Cars',     Icon: Car     },
+  { id: 'package', label: 'Packages', Icon: Package },
 ]
 
 const TAB_STYLES: Record<TransportTab, {
@@ -72,6 +75,13 @@ const TAB_STYLES: Record<TransportTab, {
     iconBgInactive:  'bg-rose-50',
     iconCls:         'text-rose-400',
     labelBgActive:   'bg-rose-400',
+  },
+  package: {
+    activeBorderCls: 'border-amber-400 shadow-md shadow-amber-200',
+    iconBgActive:    'bg-gradient-to-b from-amber-400 to-orange-500',
+    iconBgInactive:  'bg-amber-50',
+    iconCls:         'text-amber-500',
+    labelBgActive:   'bg-amber-500',
   },
 }
 
@@ -208,6 +218,14 @@ function SearchResults() {
   const [noPrepaymentOnly, setNoPrepaymentOnly]             = useState(false)
   const [minHotelReviewScore, setMinHotelReviewScore]       = useState(0)
 
+  // ── Package filter state ───────────────────────────────────────────────────
+  const [selectedPackageTypes, setSelectedPackageTypes]     = useState<string[]>([])
+  const [flightsIncluded, setFlightsIncluded]               = useState(false)
+  const [mealsIncluded, setMealsIncluded]                   = useState(false)
+  const [transfersIncluded, setTransfersIncluded]           = useState(false)
+
+  const { addRecord } = useSearchHistoryStore()
+
   // ── Banner state ──────────────────────────────────────────────────────────
   const [draftQuery, setDraftQuery] = useState(q)
 
@@ -233,6 +251,8 @@ function SearchResults() {
     setFreeCancellationOnly(false); setBreakfastOnly(false)
     setPoolOnly(false); setParkingOnly(false); setNoPrepaymentOnly(false)
     setMinHotelReviewScore(0)
+    // package
+    setSelectedPackageTypes([]); setFlightsIncluded(false); setMealsIncluded(false); setTransfersIncluded(false)
   }
 
   const runSearch = useCallback(async (query: string) => {
@@ -259,6 +279,19 @@ function SearchResults() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (q) runSearch(q) }, [q, runSearch])
+
+  // Save to AI Scout history whenever a successful search completes
+  useEffect(() => {
+    if (data?.intent && q) {
+      addRecord({
+        query: q,
+        intent: data.intent.intent ?? null,
+        from_city: data.intent.from_city ?? null,
+        to_city: data.intent.to_city ?? data.intent.city ?? null,
+      })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
 
   const handleSearch = useCallback((query: string) => {
     if (!query.trim()) return
@@ -440,6 +473,20 @@ function SearchResults() {
       if (acOnly)                           rs = rs.filter(r => r.ac === true)
     }
 
+    if (intent === 'package') {
+      if (selectedPackageTypes.length > 0)
+        rs = rs.filter(r => selectedPackageTypes.includes((r.trip_style ?? r.type) as string))
+      if (flightsIncluded)
+        rs = rs.filter(r => (r.inclusions as Record<string, unknown>)?.flights === true)
+      if (mealsIncluded)
+        rs = rs.filter(r => {
+          const inc = r.inclusions as Record<string, unknown> | undefined
+          return inc?.meals === true || inc?.breakfast === true
+        })
+      if (transfersIncluded)
+        rs = rs.filter(r => (r.inclusions as Record<string, unknown>)?.transfers === true)
+    }
+
     if (intent === 'hotel') {
       if (selectedStarRatings.length > 0)   rs = rs.filter(r => selectedStarRatings.includes((r.stars ?? r.star_rating) as number))
       if (selectedPropertyTypes.length > 0) rs = rs.filter(r => selectedPropertyTypes.includes((r.category ?? r.property_type) as string))
@@ -466,8 +513,14 @@ function SearchResults() {
         const ds = (a.stops as number) - (b.stops as number)
         return ds !== 0 ? ds : ((a.total_price ?? a.price) as number) - ((b.total_price ?? b.price) as number)
       })
-    } else if (sortBy === 'best' && intent === 'hotel') {
+    } else if (sortBy === 'best' && (intent === 'hotel' || intent === 'package')) {
       rs = rs.sort((a, b) => (b.rating as number) - (a.rating as number))
+    } else if (sortBy === 'quickest' && intent === 'package') {
+      rs = rs.sort((a, b) => {
+        const savA = Number(a.original_price ?? 0) - Number(a.price_per_person ?? a.price ?? 0)
+        const savB = Number(b.original_price ?? 0) - Number(b.price_per_person ?? b.price ?? 0)
+        return savB - savA
+      })
     } else if (sortBy === 'quickest' && intent === 'hotel') {
       rs = rs.sort((a, b) => ((b.stars ?? b.star_rating) as number) - ((a.stars ?? a.star_rating) as number))
     } else if (sortBy === 'quickest') {
@@ -485,7 +538,8 @@ function SearchResults() {
       selectedStarRatings, selectedPropertyTypes, selectedAmenities,
       selectedMealPlans, selectedBedTypes,
       freeCancellationOnly, breakfastOnly, poolOnly, parkingOnly, noPrepaymentOnly,
-      minHotelReviewScore, maxFlightDuration])
+      minHotelReviewScore, maxFlightDuration,
+      selectedPackageTypes, flightsIncluded, mealsIncluded, transfersIncluded])
 
   // ── Toggle handlers ────────────────────────────────────────────────────────
   const toggleStop    = (s: number) => setSelectedStops(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])
@@ -501,6 +555,7 @@ function SearchResults() {
   const toggleFuelType    = (f: string) => setSelectedFuelTypes(prev => prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f])
   const toggleCarCompany  = (c: string) => setSelectedCarCompanies(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c])
 
+  const togglePackageType   = (t: string) => setSelectedPackageTypes(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])
   const toggleStarRating    = (s: number) => setSelectedStarRatings(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])
   const togglePropertyType  = (t: string) => setSelectedPropertyTypes(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])
   const toggleAmenity       = (a: string) => setSelectedAmenities(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a])
@@ -522,15 +577,17 @@ function SearchResults() {
     selectedStarRatings.length > 0 || selectedPropertyTypes.length > 0 || selectedAmenities.length > 0 ||
     selectedMealPlans.length > 0 || selectedBedTypes.length > 0 ||
     freeCancellationOnly || breakfastOnly || poolOnly || parkingOnly || noPrepaymentOnly ||
-    minHotelReviewScore > 0
+    minHotelReviewScore > 0 ||
+    selectedPackageTypes.length > 0 || flightsIncluded || mealsIncluded || transfersIncluded
 
   // ── Sort label per mode ────────────────────────────────────────────────────
   const sortLabels: Record<TransportTab, [string, string, string]> = {
-    flight: ['Cheapest', 'Best', 'Quickest'],
-    hotel:  ['Cheapest', 'Top Rated', 'Most Stars'],
-    train:  ['Cheapest', 'Earliest', 'Fastest'],
-    bus:    ['Cheapest', 'Earliest', 'Top Rated'],
-    car:    ['Cheapest', 'Premium', 'Compact'],
+    flight:  ['Cheapest', 'Best', 'Quickest'],
+    hotel:   ['Cheapest', 'Top Rated', 'Most Stars'],
+    train:   ['Cheapest', 'Earliest', 'Fastest'],
+    bus:     ['Cheapest', 'Earliest', 'Top Rated'],
+    car:     ['Cheapest', 'Premium', 'Compact'],
+    package: ['Cheapest', 'Top Rated', 'Best Value'],
   }
 
   // ── Search bar defaults from current intent ───────────────────────────────
@@ -593,11 +650,12 @@ function SearchResults() {
 
           {/* Row 2 — mode-specific search bar */}
           <div>
-            {activeTab === 'flight' && <FlightSearchBar key={intentKey} defaults={flightDef} />}
-            {activeTab === 'hotel'  && <HotelSearchBar  key={intentKey} defaults={hotelDef} />}
-            {activeTab === 'bus'    && <BusSearchBar    key={intentKey} defaults={busDef} />}
-            {activeTab === 'car'    && <CarSearchBar    key={intentKey} defaults={carDef} />}
-            {activeTab === 'train'  && <TrainSearchBar  key={intentKey} defaults={trainDef} />}
+            {activeTab === 'flight'   && <FlightSearchBar  key={intentKey} defaults={flightDef} />}
+            {activeTab === 'hotel'    && <HotelSearchBar   key={intentKey} defaults={hotelDef} />}
+            {activeTab === 'bus'      && <BusSearchBar     key={intentKey} defaults={busDef} />}
+            {activeTab === 'car'      && <CarSearchBar     key={intentKey} defaults={carDef} />}
+            {activeTab === 'train'    && <TrainSearchBar   key={intentKey} defaults={trainDef} />}
+            {activeTab === 'package'  && <PackageSearchBar key={intentKey} />}
           </div>
 
         </div>
@@ -669,6 +727,8 @@ function SearchResults() {
               onToggleBusType={toggleBusType}
               selectedCarCategories={selectedCarCategories}
               onToggleCarCategory={toggleCarCategory}
+              selectedPackageTypes={selectedPackageTypes}
+              onTogglePackageType={togglePackageType}
             />
           </div>
         </div>
@@ -775,6 +835,14 @@ function SearchResults() {
                     selectedCompanies: selectedCarCompanies, onToggleCompany: toggleCarCompany,
                     acOnly, onAcOnlyChange: setAcOnly,
                   }}
+                  pkg={{
+                    results: data.results,
+                    priceRange, maxPrice, onMaxPriceChange: setMaxPrice,
+                    selectedTripStyles: selectedPackageTypes, onToggleTripStyle: togglePackageType,
+                    flightsIncluded, onFlightsIncludedChange: setFlightsIncluded,
+                    mealsIncluded, onMealsIncludedChange: setMealsIncluded,
+                    transfersIncluded, onTransfersIncludedChange: setTransfersIncluded,
+                  }}
                 />
               </div>
             </aside>
@@ -822,6 +890,29 @@ function SearchResults() {
                 </div>
               )}
             </main>
+          </div>
+        )}
+
+        {/* Smart empty state — no results after a search */}
+        {data && !loading && data.results.length === 0 && (
+          <div className="max-w-lg mx-auto text-center py-20">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/25">
+              <Sparkles className="w-8 h-8 text-white" />
+            </div>
+            <p className="text-slate-800 font-bold text-lg">This looks like a full trip plan</p>
+            <p className="text-slate-500 text-sm mt-2 leading-relaxed">
+              Complex itineraries, multi-city trips, and visa + budget queries are best handled by our AI agents.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+              <a href={`/chat?q=${encodeURIComponent(q)}`}
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-700 text-white text-sm font-bold shadow-md shadow-violet-500/25 hover:shadow-violet-500/40 transition-all">
+                <Sparkles className="w-4 h-4" /> Ask Travel Buddy
+              </a>
+              <a href="/ai-agent"
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-violet-200 bg-violet-50 text-violet-700 text-sm font-bold hover:bg-violet-100 transition-all">
+                View AI Scout Recommendations
+              </a>
+            </div>
           </div>
         )}
 
@@ -911,6 +1002,14 @@ function SearchResults() {
                 selectedFuelTypes, onToggleFuelType: toggleFuelType,
                 selectedCompanies: selectedCarCompanies, onToggleCompany: toggleCarCompany,
                 acOnly, onAcOnlyChange: setAcOnly,
+              }}
+              pkg={{
+                results: data.results,
+                priceRange, maxPrice, onMaxPriceChange: setMaxPrice,
+                selectedTripStyles: selectedPackageTypes, onToggleTripStyle: togglePackageType,
+                flightsIncluded, onFlightsIncludedChange: setFlightsIncluded,
+                mealsIncluded, onMealsIncludedChange: setMealsIncluded,
+                transfersIncluded, onTransfersIncludedChange: setTransfersIncluded,
               }}
             />
           </div>

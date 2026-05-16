@@ -17,17 +17,19 @@
 | Animations | Framer Motion 12 |
 | Icons | lucide-react |
 | UI Primitives | shadcn/ui (components/ui/) |
-| State | Zustand 5 (authStore, searchStore, tripsStore) |
+| State | Zustand 5 (authStore, searchStore, tripsStore, chatStore) |
 | Forms | react-hook-form + zod |
-| Auth | @clerk/nextjs (+ custom authStore with JWT) |
+| Auth | Custom JWT (FastAPI) + authStore (Zustand + localStorage) |
 | HTTP | Axios (lib/api.ts) — backend at `NEXT_PUBLIC_API_URL` (default localhost:8000) |
 | Toasts | Sonner |
 | Fonts | Google Fonts (Inter) |
 
-**Backend** (separate repo, not in this directory)
+**Backend** (lives at `../backend/` relative to this frontend directory)
 - FastAPI (Python) at `http://localhost:8000`
-- Endpoints: `/api/search/flights`, `/api/search/hotels`, `/api/search/trains`, `/api/search/buses`, `/api/ai/query`
-- Currently returns **mock data** — Amadeus API integration is the agreed next step
+- **Live endpoints**: `/api/auth/*` (JWT auth), `/api/chat/stream` (Travel Buddy AI, SSE)
+- **Mock endpoints**: `/api/search/flights`, `/api/search/hotels`, `/api/search/trains`, `/api/search/buses`
+- AI agent: LangGraph ≥0.2.28 + LangChain OpenAI ≥0.2.0 + GPT-4o streaming
+- Amadeus API integration is the agreed next step for real flight/hotel data
 
 ---
 
@@ -66,7 +68,7 @@ frontend/
 │   │   │   ├── payments/page.tsx
 │   │   │   ├── wallet/page.tsx
 │   │   │   ├── alerts/page.tsx
-│   │   │   ├── chat/page.tsx
+│   │   │   ├── chat/page.tsx    # Full Travel Buddy AI chat (ChatInner + Suspense wrapper)
 │   │   │   ├── saved/page.tsx
 │   │   │   ├── notifications/page.tsx
 │   │   │   ├── support/page.tsx
@@ -81,9 +83,10 @@ frontend/
 │   │   │   ├── [packageId]/page.tsx
 │   │   │   └── create-with-ai/page.tsx
 │   │   └── search/page.tsx      # Universal search results page
-│   ├── layout.tsx               # Root layout: Navbar + Footer + Toaster (all pages)
+│   ├── icon.tsx                 # Dynamic favicon: purple gradient + Plane (ImageResponse)
+│   ├── layout.tsx               # Root layout: Navbar + Footer + Toaster + TravelBuddyWidget
 │   ├── page.tsx                 # Home/landing page
-│   └── globals.css              # Tailwind v4 theme + base styles
+│   └── globals.css              # Tailwind v4 theme; body uses overflow-x: clip (not hidden)
 ├── components/
 │   ├── cards/
 │   │   ├── DestinationCard.tsx
@@ -110,8 +113,9 @@ frontend/
 │   │       ├── CitySearchInput.tsx   # Reusable city autocomplete
 │   │       └── DatePickerCell.tsx    # Reusable date picker popup
 │   ├── layout/
-│   │   ├── Navbar.tsx
-│   │   └── Footer.tsx
+│   │   ├── Navbar.tsx               # Purple logo/branding (violet-500 → purple-700)
+│   │   ├── Footer.tsx
+│   │   └── TravelBuddyWidget.tsx    # Floating mini chat widget; hidden on /chat route
 │   ├── packages/
 │   │   └── PackageCard.tsx
 │   ├── search/
@@ -136,11 +140,14 @@ frontend/
 ├── lib/
 │   ├── api.ts                   # Axios instance + typed API calls
 │   ├── api/auth.ts              # Auth-specific API (register/login/verify etc.)
+│   ├── chat.ts                  # streamChat() — shared SSE streaming helper for AI chat
+│   ├── config.ts                # API_BASE_URL (reads NEXT_PUBLIC_API_URL)
 │   ├── packages.ts              # Package types, constants, coverImage helper
 │   ├── destinationImages.ts     # Unsplash destination photo URLs
 │   └── utils.ts                 # cn() utility (clsx + tailwind-merge)
 ├── store/
 │   ├── authStore.ts             # User session (persisted to localStorage)
+│   ├── chatStore.ts             # Chat messages + widgetOpen (persisted, key: travelai-chat)
 │   ├── searchStore.ts           # Search state (active tab, params, results)
 │   └── tripsStore.ts            # Trips + saved items
 ├── public/                      # Static assets
@@ -440,17 +447,17 @@ new Date(isoDate + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', mo
 
 | Endpoint | Status |
 |---|---|
-| Auth (register/login/verify/reset) | ✅ Integrated (FastAPI) |
+| Auth (register/login/verify/reset) | ✅ Live (FastAPI + MongoDB) |
+| POST /api/chat/stream | ✅ Live — LangGraph + GPT-4o, SSE streaming |
 | Search Flights | ⚠️ Mock data — Amadeus planned |
 | Search Hotels | ⚠️ Mock data |
 | Search Buses | ⚠️ Mock data |
 | Search Cars | ⚠️ Mock data |
-| AI Query | ⚠️ Mock data |
 | GET /api/packages | ❌ Not yet built |
 | GET /api/packages/{id} | ❌ Not yet built |
 | GET /api/deals | ❌ Not yet built |
 
-**Next integration priority**: Amadeus API for real flight data.
+**Next integration priority**: Amadeus API for real flight/hotel data.
 
 ---
 
@@ -460,7 +467,7 @@ new Date(isoDate + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', mo
 
 2. **Tailwind v4** — Uses `@theme {}` CSS variables instead of `tailwind.config.js`. No `tailwind.config.ts` exists. Arbitrary values like `text-[10px]` and class patterns like `bg-white/10` work fine.
 
-3. **`overflow` + dropdowns** — Any parent with `overflow-x: auto` or `overflow: hidden` will clip absolutely-positioned dropdowns. The hero section's `<section>` intentionally has no overflow constraint. The image clipping uses a separate inner div.
+3. **`overflow` + dropdowns** — Any parent with `overflow-x: auto` or `overflow: hidden` will clip absolutely-positioned dropdowns. The hero section's `<section>` intentionally has no overflow constraint. The image clipping uses a separate inner div. The search bars use a 3-group `sm:contents` layout for mobile responsiveness — **do not add `overflow-x: auto`** to the search bar container.
 
 4. **AnimatePresence title shift** — Fixed by `min-h-[150px]` on the search widget container. If AIChatInput grows beyond 150px, this value must increase.
 
@@ -470,16 +477,74 @@ new Date(isoDate + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', mo
 
 7. **Image remote patterns** — Only `images.unsplash.com` and `images.kiwi.com` are whitelisted in `next.config.ts`. Add new domains before using `<Image>` with external sources.
 
-8. **No `git init`** — The project is not a git repository (`Is a git repository: false`). Do not run git commands.
+8. **Git repository** — The project IS a git repository. GitHub remote: `https://github.com/simplysameer333/travel-ai`. Secrets (`.jwt_secret`, API keys, Railway/GitHub tokens) are intentionally untracked — never commit them.
 
 ---
 
-## 11. Pending / Future Work
+## 11. Travel Buddy AI Agent
 
-- [ ] Amadeus API integration for real flight search results
+The AI chat system consists of three layers:
+
+**`backend/app/agents/travel_agent.py`** — LangGraph agent
+- `AgentState(TypedDict)` with `messages: Annotated[list[BaseMessage], add_messages]`
+- Lazy singleton `get_travel_agent()` — compiles `StateGraph` once per process
+- `build_lc_messages()` converts `[{role, content}]` dicts → LangChain message objects
+- Node `call_model` prepends `SystemMessage(SYSTEM_PROMPT)` before invoking `ChatOpenAI(model="gpt-4o", streaming=True, temperature=0.7)`
+- Full system prompt in `backend/prompts/chatAIAgent` — Indian travel concierge persona
+
+**`backend/app/api/chat.py`** — SSE endpoint
+- `POST /api/chat/stream` → `StreamingResponse(media_type="text/event-stream")`
+- Uses `agent.astream_events({"messages": lc_messages}, version="v2")`
+- Filters `event["event"] == "on_chat_model_stream"`, handles `str` and `list` content
+- Headers: `Cache-Control: no-cache`, `X-Accel-Buffering: no` (needed for Railway/nginx)
+- Wire format: `data: {"token": "..."}\n\n` per token, `data: [DONE]\n\n` at end
+
+**`frontend/lib/chat.ts`** — SSE client
+- `streamChat(messages, onToken, onDone, onError)` — shared by widget and full chat page
+- Line buffer: `buffer += decoder.decode(value, {stream:true}); lines = buffer.split('\n'); buffer = lines.pop()`
+
+**`frontend/store/chatStore.ts`** — shared state (Zustand + persist)
+- Persists `messages` + `widgetOpen` to `localStorage` key `travelai-chat`
+- `startStreamingMessage()` creates empty assistant bubble, returns `id`
+- `appendToken(id, token)` appends token to that bubble
+- Both `/chat` page and `TravelBuddyWidget` share this store — conversation continues seamlessly
+
+**`frontend/components/layout/TravelBuddyWidget.tsx`** — floating mini chat
+- Appears after 3 s or first scroll; peek tooltip after 600 ms
+- Panel: `w-[320px]`, `height: 70vh`, flex column (header shrink-0, messages flex-1, input shrink-0)
+- `if (pathname === '/chat') return null` — placed AFTER all hooks to avoid hooks-order crash
+- "Open full Travel Buddy" button navigates to `/chat` — conversation continues from store
+
+---
+
+## 12. Horizontal Scroll Pattern (QuickDestBar)
+
+Critical fix applied — **do not revert**:
+
+```css
+/* globals.css */
+body { overflow-x: clip; }   /* NOT overflow-x: hidden — that blocks child scroll containers */
+/* html has NO overflow-x rule */
+```
+
+Inner scroll row must use `w-max` on the flex container:
+```tsx
+<div ref={scrollRef} className="flex-1 overflow-x-auto no-scrollbar">
+  <div className="flex items-center gap-2 w-max">   {/* w-max forces overflow */}
+    {items.map(...)}
+  </div>
+</div>
+```
+`overflow-x: hidden` on `<html>` propagates to the viewport and blocks ALL child `overflow-x: auto` scroll containers — use `clip` instead.
+
+---
+
+## 13. Pending / Future Work
+
+- [ ] Amadeus API integration for real flight/hotel search results
 - [ ] `GET /api/packages`, `GET /api/packages/{id}`, `GET /api/deals` backend endpoints
-- [ ] Mobile-responsive search bars (currently overflow on narrow screens — `overflow-x-auto` was removed for dropdown support)
-- [ ] Search results page: implement tab-based results for Bus and Car (currently only Flights/Hotels/Trains)
+- [x] ~~Mobile-responsive search bars~~ — DONE: 3-row grouped layout on mobile (cities / dates / pickers+button), `sm:contents` collapses groups back to single row on desktop
+- [ ] Search results page: tab-based results for Bus and Car (currently only Flights/Hotels/Trains)
 - [ ] Booking flow (select result → confirm → payment)
-- [ ] Real user authentication flow testing with Clerk
-- [ ] AI trip planner (`/chat` and `/packages/create-with-ai`) backend integration
+- [ ] Save / bookmark AI chat responses (UI button exists, not wired up)
+- [x] ~~AI trip planner `/chat` backend integration~~ — DONE (LangGraph + GPT-4o, streaming)

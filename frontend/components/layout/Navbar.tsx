@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plane, Menu, X, Sparkles, Briefcase, Home, LogIn, UserPlus, LogOut, LayoutDashboard } from 'lucide-react'
+import { Plane, Menu, X, Sparkles, Briefcase, LogIn, UserPlus, LogOut, LayoutDashboard } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { authApi } from '@/lib/api/auth'
 import { toast } from 'sonner'
@@ -49,23 +49,12 @@ export default function Navbar() {
           {/* ── Desktop nav ── */}
           <nav className="hidden md:flex items-center gap-2">
 
-              {/* Home — sky */}
-              <Link href="/"
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all ${
-                  pathname === '/'
-                    ? 'bg-sky-500/20 border-sky-400/60 text-sky-300 shadow-md shadow-sky-500/20'
-                    : 'border-sky-500/30 text-sky-400/80 hover:border-sky-400/60 hover:bg-sky-500/10 hover:text-sky-300 hover:shadow-md hover:shadow-sky-500/15'
-                }`}>
-                <Home className="w-4 h-4" />
-                Home
-              </Link>
-
-              {/* Dashboard — violet */}
+              {/* Dashboard — sky blue */}
               <Link href="/dashboard"
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all ${
                   pathname === '/dashboard'
-                    ? 'bg-violet-500/20 border-violet-400/60 text-violet-300 shadow-md shadow-violet-500/20'
-                    : 'border-violet-500/30 text-violet-400/80 hover:border-violet-400/60 hover:bg-violet-500/10 hover:text-violet-300 hover:shadow-md hover:shadow-violet-500/15'
+                    ? 'bg-sky-500/20 border-sky-400/60 text-sky-300 shadow-md shadow-sky-500/20'
+                    : 'border-sky-500/30 text-sky-400/80 hover:border-sky-400/60 hover:bg-sky-500/10 hover:text-sky-300 hover:shadow-md hover:shadow-sky-500/15'
                 }`}>
                 <LayoutDashboard className="w-4 h-4" />
                 Dashboard
@@ -82,10 +71,10 @@ export default function Navbar() {
                 Bookings
               </Link>
 
-              {/* Travel Buddy — violet/purple */}
-              <Link href="/chat"
+              {/* AI Scout — violet/purple */}
+              <Link href="/ai-agent"
                 className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
-                  pathname === '/chat'
+                  pathname === '/ai-agent'
                     ? 'bg-violet-500/20 border-violet-400/60 text-violet-300 shadow-md shadow-violet-500/20'
                     : 'border-violet-500/30 text-violet-400/80 hover:border-violet-400/60 hover:bg-violet-500/10 hover:text-violet-300 hover:shadow-md hover:shadow-violet-500/15'
                 }`}>
@@ -95,7 +84,7 @@ export default function Navbar() {
                     <span className="absolute inset-0 bg-violet-400 rounded-full animate-ping opacity-75" />
                   </span>
                 </span>
-                Travel Buddy
+                AI Scout
               </Link>
             </nav>
 
@@ -111,12 +100,12 @@ export default function Navbar() {
               </button>
             ) : (
               <>
-                {/* Login — violet */}
+                {/* Login — amber */}
                 <Link href="/login"
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all ${
                     pathname === '/login'
-                      ? 'bg-violet-500/20 border-violet-400/60 text-violet-300 shadow-md shadow-violet-500/20'
-                      : 'border-violet-500/30 text-violet-400/80 hover:border-violet-400/60 hover:bg-violet-500/10 hover:text-violet-300 hover:shadow-md hover:shadow-violet-500/15'
+                      ? 'bg-amber-500/20 border-amber-400/60 text-amber-300 shadow-md shadow-amber-500/20'
+                      : 'border-amber-500/30 text-amber-400/80 hover:border-amber-400/60 hover:bg-amber-500/10 hover:text-amber-300 hover:shadow-md hover:shadow-amber-500/15'
                   }`}>
                   <LogIn className="w-4 h-4" />
                   Login
@@ -161,17 +150,9 @@ export default function Navbar() {
           >
             <div className="px-4 py-4 bg-slate-900/98 backdrop-blur-md flex flex-col gap-2">
 
-              <Link href="/" onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold border transition-all ${
-                  pathname === '/' ? 'bg-sky-500/20 border-sky-400/60 text-sky-300' : 'border-sky-500/25 text-sky-400/80 hover:border-sky-400/50 hover:bg-sky-500/10 hover:text-sky-300'
-                }`}>
-                <Home className="w-4 h-4" />
-                Home
-              </Link>
-
               <Link href="/dashboard" onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold border transition-all ${
-                  pathname === '/dashboard' ? 'bg-violet-500/20 border-violet-400/60 text-violet-300' : 'border-violet-500/25 text-violet-400/80 hover:border-violet-400/50 hover:bg-violet-500/10 hover:text-violet-300'
+                  pathname === '/dashboard' ? 'bg-sky-500/20 border-sky-400/60 text-sky-300' : 'border-sky-500/25 text-sky-400/80 hover:border-sky-400/50 hover:bg-sky-500/10 hover:text-sky-300'
                 }`}>
                 <LayoutDashboard className="w-4 h-4" />
                 Dashboard
@@ -185,15 +166,15 @@ export default function Navbar() {
                 Bookings
               </Link>
 
-              <Link href="/chat" onClick={() => setMobileOpen(false)}
+              <Link href="/ai-agent" onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold border transition-all ${
-                  pathname === '/chat' ? 'bg-violet-500/20 border-violet-400/60 text-violet-300' : 'border-violet-500/25 text-violet-400/80 hover:border-violet-400/50 hover:bg-violet-500/10 hover:text-violet-300'
+                  pathname === '/ai-agent' ? 'bg-violet-500/20 border-violet-400/60 text-violet-300' : 'border-violet-500/25 text-violet-400/80 hover:border-violet-400/50 hover:bg-violet-500/10 hover:text-violet-300'
                 }`}>
                 <span className="relative">
                   <Sparkles className="w-4 h-4" />
                   <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-violet-400 rounded-full" />
                 </span>
-                Travel Buddy
+                AI Scout
               </Link>
 
               <div className="border-t border-white/10 pt-3 mt-1 flex flex-col gap-2">
@@ -209,7 +190,7 @@ export default function Navbar() {
                   <>
                     <Link href="/login" onClick={() => setMobileOpen(false)}
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold border transition-all ${
-                        pathname === '/login' ? 'bg-violet-500/20 border-violet-400/60 text-violet-300' : 'border-violet-500/25 text-violet-400/80 hover:border-violet-400/50 hover:bg-violet-500/10 hover:text-violet-300'
+                        pathname === '/login' ? 'bg-amber-500/20 border-amber-400/60 text-amber-300' : 'border-amber-500/25 text-amber-400/80 hover:border-amber-400/50 hover:bg-amber-500/10 hover:text-amber-300'
                       }`}>
                       <LogIn className="w-4 h-4" />
                       Login

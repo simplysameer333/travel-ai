@@ -4,6 +4,7 @@
 !.env.example
 .github_token
 .railway_token
+.jwt_secret
 
 # ── Python ────────────────────────────────────────────────────────────────
 __pycache__/

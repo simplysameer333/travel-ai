@@ -584,6 +584,68 @@ function CarFilters({
   )
 }
 
+// ── package filters ───────────────────────────────────────────────────────────
+
+const PACKAGE_TRIP_STYLES = ['Adventure', 'Beach', 'Cultural', 'Honeymoon', 'Family', 'Luxury', 'Budget', 'Backpacker']
+
+export interface PackageFilterProps {
+  results: ResultRow[]
+  priceRange: [number, number]
+  maxPrice: number
+  onMaxPriceChange: (v: number) => void
+  selectedTripStyles: string[]
+  onToggleTripStyle: (s: string) => void
+  flightsIncluded: boolean
+  onFlightsIncludedChange: (v: boolean) => void
+  mealsIncluded: boolean
+  onMealsIncludedChange: (v: boolean) => void
+  transfersIncluded: boolean
+  onTransfersIncludedChange: (v: boolean) => void
+}
+
+function PackageQuickToggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+      <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)}
+        className="w-4 h-4 rounded border-slate-300 accent-amber-500 cursor-pointer" />
+      <span className={`text-sm transition-colors ${checked ? 'text-slate-800 font-medium' : 'text-slate-600 group-hover:text-slate-800'}`}>
+        {label}
+      </span>
+    </label>
+  )
+}
+
+function PackageFilters({
+  results, priceRange, maxPrice, onMaxPriceChange,
+  selectedTripStyles, onToggleTripStyle,
+  flightsIncluded, onFlightsIncludedChange,
+  mealsIncluded, onMealsIncludedChange,
+  transfersIncluded, onTransfersIncludedChange,
+}: PackageFilterProps) {
+  const available = PACKAGE_TRIP_STYLES.filter(s =>
+    results.some(r => r.trip_style === s || r.type === s)
+  )
+  const show = available.length > 0 ? available : PACKAGE_TRIP_STYLES
+
+  return (
+    <>
+      <SidebarSection title="Inclusions">
+        <div className="space-y-2.5">
+          <PackageQuickToggle label="Flights included"    checked={flightsIncluded}    onChange={onFlightsIncludedChange} />
+          <PackageQuickToggle label="Meals included"      checked={mealsIncluded}      onChange={onMealsIncludedChange} />
+          <PackageQuickToggle label="Transfers included"  checked={transfersIncluded}  onChange={onTransfersIncludedChange} />
+        </div>
+      </SidebarSection>
+
+      <PriceFilter priceRange={priceRange} maxPrice={maxPrice} onMaxPriceChange={onMaxPriceChange} />
+
+      <SidebarSection title="Trip Style">
+        <CheckList items={show} selected={selectedTripStyles} onToggle={onToggleTripStyle} />
+      </SidebarSection>
+    </>
+  )
+}
+
 // ── hotel filters ─────────────────────────────────────────────────────────────
 
 const HOTEL_PROPERTY_TYPES = [
@@ -769,9 +831,10 @@ export interface SearchFiltersProps {
   train: TrainFilterProps
   bus: BusFilterProps
   car: CarFilterProps
+  pkg: PackageFilterProps
 }
 
-export function SearchFilters({ tab, aiMessage, onClearAll, hasActiveFilters, flight, hotel, train, bus, car }: SearchFiltersProps) {
+export function SearchFilters({ tab, aiMessage, onClearAll, hasActiveFilters, flight, hotel, train, bus, car, pkg }: SearchFiltersProps) {
   return (
     <div>
       {aiMessage && (
@@ -780,11 +843,12 @@ export function SearchFilters({ tab, aiMessage, onClearAll, hasActiveFilters, fl
         </div>
       )}
 
-      {tab === 'flight' && <FlightFilters {...flight} />}
-      {tab === 'hotel'  && <HotelFilters  {...hotel} />}
-      {tab === 'train'  && <TrainFilters  {...train} />}
-      {tab === 'bus'    && <BusFilters    {...bus} />}
-      {tab === 'car'    && <CarFilters    {...car} />}
+      {tab === 'flight'   && <FlightFilters   {...flight} />}
+      {tab === 'hotel'    && <HotelFilters    {...hotel} />}
+      {tab === 'train'    && <TrainFilters    {...train} />}
+      {tab === 'bus'      && <BusFilters      {...bus} />}
+      {tab === 'car'      && <CarFilters      {...car} />}
+      {tab === 'package'  && <PackageFilters  {...pkg} />}
 
       {hasActiveFilters && (
         <button

@@ -103,7 +103,7 @@ export default function TravelBuddyWidget() {
   const hasConversation = messages.length > 1
 
   // All hooks above — safe to guard render here
-  if (pathname === '/chat') return null
+  if (pathname === '/chat' || pathname === '/ai-agent') return null
 
   return (
     <AnimatePresence>

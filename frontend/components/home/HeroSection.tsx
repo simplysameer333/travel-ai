@@ -42,7 +42,7 @@ export default function HeroSection() {
     <div>
       {/* ── Fixed-height image section ──
           NOTE: no overflow-hidden here so search dropdowns can escape the section bounds */}
-      <section className="relative flex flex-col" style={{ height: 'min(440px, calc(100vh - 190px))' }}>
+      <section className="relative flex flex-col sm:h-[440px] sm:max-h-[calc(100vh-190px)]">
 
         {/* Background image in its own clipping wrapper */}
         <div className="absolute inset-0 overflow-hidden">
@@ -72,19 +72,20 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.14 }}
             className="w-full max-w-4xl">
 
-            {/* ── Tab switcher (scrollable on mobile) ── */}
-            <div className="flex justify-center mb-3">
-              <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md border border-white/15 rounded-xl p-1 shadow-xl overflow-x-auto no-scrollbar">
+            {/* ── Tab switcher ── */}
+            <div className="mb-3 flex justify-center">
+              <div className="flex flex-nowrap items-center gap-0.5 sm:gap-1 bg-black/40 backdrop-blur-md border border-white/15 rounded-xl p-1 shadow-xl">
                 {TABS.map(tab => {
                   const Icon = tab.icon
                   const isActive = activeTab === tab.key
                   return (
                     <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all shrink-0 ${
+                      title={tab.label}
+                      className={`flex items-center gap-1.5 px-2.5 py-1.5 sm:gap-2 sm:px-4 sm:py-2 rounded-xl text-sm font-semibold transition-all shrink-0 ${
                         isActive ? `bg-gradient-to-r ${tab.gradient} text-white shadow-md` : 'text-white/60 hover:text-white hover:bg-white/10'
                       }`}>
-                      <Icon className="w-3.5 h-3.5" />
-                      <span>{tab.label}</span>
+                      <Icon className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+                      <span className="hidden sm:inline">{tab.label}</span>
                     </button>
                   )
                 })}
@@ -94,7 +95,7 @@ export default function HeroSection() {
             {/* ── Search widgets ──
                 min-h keeps this container at a fixed size so the title above
                 never shifts when AnimatePresence unmounts the exiting tab. */}
-            <div className="min-h-[140px]">
+            <div className="min-h-[160px] sm:min-h-[140px]">
               <AnimatePresence mode="wait">
                 {activeTab === 'ai'       && <motion.div key="ai"       {...slideIn}><AIChatInput compact /></motion.div>}
                 {activeTab === 'flights'  && <motion.div key="flights"  {...slideIn}><FlightSearchBar /></motion.div>}

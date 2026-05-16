@@ -18,7 +18,7 @@ const QUOTA_LABELS: Record<TrainQuota, string> = {
   general: 'General', tatkal: 'Tatkal', ladies: 'Ladies', senior: 'Senior Citizen',
 }
 
-const cellCls = 'px-3 py-2.5 border-r border-white/15 hover:bg-white/[0.06] transition-colors cursor-text'
+const cellCls = 'px-2.5 py-1.5 sm:py-2.5 border-r border-white/15 hover:bg-white/[0.06] transition-colors cursor-text'
 const iconBox = 'bg-emerald-500/25'
 const opt     = 'flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm border border-white/15 text-xs font-semibold text-white/70 hover:text-white hover:border-white/30 transition-all'
 const micro   = 'text-white/50 text-[10px] font-semibold uppercase tracking-wider leading-none mb-0.5'
@@ -131,82 +131,76 @@ export default function TrainSearchBar({ defaults = {} }: { defaults?: TrainDefa
       </div>
 
       {/* ── Search bar ── */}
-      <div className="flex items-stretch bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-stretch bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl">
 
-        {/* From */}
-        <CitySearchInput
-          label="From station" placeholder="City or station"
-          value={from} onChange={setFrom}
-          icon={<Train className="w-3 h-3 text-emerald-300" />}
-          iconBg={iconBox}
-          accent="emerald"
-          className={`flex-1 min-w-0 ${cellCls} rounded-l-2xl`}
-        />
-
-        {/* Swap */}
-        <button onClick={swap} title="Swap stations"
-          className="px-2 border-r border-white/15 text-white/40 hover:text-emerald-300 hover:bg-white/10 transition-all shrink-0">
-          <ArrowLeftRight className="w-3.5 h-3.5" />
-        </button>
-
-        {/* To */}
-        <CitySearchInput
-          label="To station" placeholder="City or station"
-          value={to} onChange={setTo}
-          icon={<Train className="w-3 h-3 text-emerald-300 rotate-180" />}
-          iconBg={iconBox}
-          accent="emerald"
-          className={`flex-1 min-w-0 ${cellCls}`}
-        />
-
-        {/* Departure date */}
-        <DatePickerCell
-          label="Departure" value={date} min={today}
-          onChange={setDate}
-          iconColor="text-emerald-300"
-          accent="emerald"
-        />
-
-        {/* Return date */}
-        {withReturn && (
-          <DatePickerCell
-            label="Return" value={returnDate} min={date || today}
-            onChange={setReturnDate}
-            iconColor="text-emerald-300"
-            accent="emerald"
+        {/* ── Row 1 (mobile): stations + swap ── */}
+        <div className="flex items-stretch border-b border-white/10 sm:contents">
+          <CitySearchInput
+            label="From station" placeholder="City or station"
+            value={from} onChange={setFrom}
+            icon={<Train className="w-3 h-3 text-emerald-300" />}
+            iconBg={iconBox} accent="emerald"
+            className={`flex-1 min-w-0 ${cellCls} rounded-tl-2xl sm:rounded-bl-2xl`}
           />
-        )}
-
-        {/* Passengers */}
-        <div className="relative shrink-0" ref={passRef}>
-          <button onClick={() => setPassOpen(v => !v)}
-            className="flex items-center gap-1.5 px-3 py-2.5 border-r border-white/15 hover:bg-white/[0.06] transition-colors h-full">
-            <Users className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
-            <div>
-              <div className={micro}>Passengers</div>
-              <div className="text-white text-sm font-semibold whitespace-nowrap">{paxLabel}</div>
-            </div>
-            <ChevronDown className={`w-3 h-3 text-white/40 transition-transform ml-0.5 ${passOpen ? 'rotate-180' : ''}`} />
+          <button onClick={swap} title="Swap stations"
+            className="px-2 border-r border-white/15 text-white/40 hover:text-emerald-300 hover:bg-white/10 transition-all shrink-0">
+            <ArrowLeftRight className="w-3.5 h-3.5" />
           </button>
-          {passOpen && (
-            <div className="absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 w-60 z-[60]">
-              <Stepper label="Adults"  sub="13–60 yrs" val={adults}  min={1} max={9} onChange={setAdults}  accent="emerald" />
-              <Stepper label="Young"   sub="5–12 yrs"  val={young}   min={0} max={8} onChange={setYoung}   accent="emerald" />
-              <Stepper label="Seniors" sub="60+ yrs"   val={seniors} min={0} max={8} onChange={setSeniors} accent="emerald" />
-              <Stepper label="Infants" sub="Under 5"   val={infants} min={0} max={4} onChange={setInfants} accent="emerald" />
-              <button onClick={() => setPassOpen(false)}
-                className="w-full mt-3 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600 transition-colors">
-                Done
-              </button>
-            </div>
+          <CitySearchInput
+            label="To station" placeholder="City or station"
+            value={to} onChange={setTo}
+            icon={<Train className="w-3 h-3 text-emerald-300 rotate-180" />}
+            iconBg={iconBox} accent="emerald"
+            className={`flex-1 min-w-0 ${cellCls} rounded-tr-2xl sm:rounded-tr-none`}
+          />
+        </div>
+
+        {/* ── Row 2 (mobile): dates ── */}
+        <div className="flex items-stretch border-b border-white/10 sm:contents">
+          <DatePickerCell
+            label="Departure" value={date} min={today}
+            onChange={setDate} iconColor="text-emerald-300" accent="emerald"
+            className="relative flex-1 min-w-0 border-r border-white/15"
+          />
+          {withReturn && (
+            <DatePickerCell
+              label="Return" value={returnDate} min={date || today}
+              onChange={setReturnDate} iconColor="text-emerald-300" accent="emerald"
+              className="relative flex-1 min-w-0 border-r border-white/15"
+            />
           )}
         </div>
 
-        {/* Search */}
-        <button onClick={go}
-          className="px-5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-sm hover:opacity-90 transition-all flex items-center gap-2 shrink-0 rounded-r-2xl">
-          Search <ArrowRight className="w-4 h-4" />
-        </button>
+        {/* ── Row 3 (mobile): passengers + search ── */}
+        <div className="flex items-stretch sm:contents">
+          <div className="relative flex-1 sm:flex-none" ref={passRef}>
+            <button onClick={() => setPassOpen(v => !v)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 sm:py-2.5 border-r border-white/15 hover:bg-white/[0.06] transition-colors h-full w-full">
+              <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-300 shrink-0" />
+              <div>
+                <div className={micro}>Passengers</div>
+                <div className="text-white text-xs sm:text-sm font-semibold whitespace-nowrap">{paxLabel}</div>
+              </div>
+              <ChevronDown className={`w-3 h-3 text-white/40 transition-transform ml-0.5 ${passOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {passOpen && (
+              <div className="absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 w-60 z-[60]">
+                <Stepper label="Adults"  sub="13–60 yrs" val={adults}  min={1} max={9} onChange={setAdults}  accent="emerald" />
+                <Stepper label="Young"   sub="5–12 yrs"  val={young}   min={0} max={8} onChange={setYoung}   accent="emerald" />
+                <Stepper label="Seniors" sub="60+ yrs"   val={seniors} min={0} max={8} onChange={setSeniors} accent="emerald" />
+                <Stepper label="Infants" sub="Under 5"   val={infants} min={0} max={4} onChange={setInfants} accent="emerald" />
+                <button onClick={() => setPassOpen(false)}
+                  className="w-full mt-3 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600 transition-colors">
+                  Done
+                </button>
+              </div>
+            )}
+          </div>
+          <button onClick={go}
+            className="px-3 sm:px-5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs sm:text-sm hover:opacity-90 transition-all flex items-center justify-center gap-1.5 sm:gap-2 flex-1 sm:flex-none rounded-b-2xl sm:rounded-bl-none sm:rounded-r-2xl">
+            Search <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   )

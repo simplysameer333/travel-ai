@@ -12,7 +12,7 @@ const CAR_TYPE_LABELS: Record<CarType, string> = {
   any: 'Any car', hatchback: 'Hatchback', sedan: 'Sedan', suv: 'SUV / MUV', luxury: 'Luxury', minivan: 'Minivan',
 }
 
-const cellCls = 'px-3 py-2.5 border-r border-white/15 hover:bg-white/[0.06] transition-colors cursor-text'
+const cellCls = 'px-2.5 py-1.5 sm:py-2.5 border-r border-white/15 hover:bg-white/[0.06] transition-colors cursor-text'
 const iconBox = 'bg-orange-500/25'
 const opt     = 'flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-sm border border-white/15 text-xs font-semibold text-white/70 hover:text-white hover:border-white/30 transition-all'
 
@@ -92,51 +92,49 @@ export default function CarSearchBar({ defaults = {} }: { defaults?: CarDefaults
       </div>
 
       {/* ── Search bar ── */}
-      <div className="flex items-stretch bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-stretch bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl">
 
-        {/* Pickup */}
-        <CitySearchInput
-          label="Pickup location" placeholder="City, airport or address"
-          value={pickup} onChange={setPickup}
-          icon={<MapPin className="w-3 h-3 text-orange-300" />}
-          iconBg={iconBox}
-          accent="orange"
-          className={`flex-1 min-w-0 ${cellCls} rounded-l-2xl`}
-        />
-
-        {/* Drop-off */}
-        {!sameDropoff && (
+        {/* ── Row 1 (mobile): pickup + optional drop-off ── */}
+        <div className="flex items-stretch border-b border-white/10 sm:contents">
           <CitySearchInput
-            label="Drop-off location" placeholder="City, airport or address"
-            value={dropoff} onChange={setDropoff}
+            label="Pickup location" placeholder="City, airport or address"
+            value={pickup} onChange={setPickup}
             icon={<MapPin className="w-3 h-3 text-orange-300" />}
-            iconBg={iconBox}
-            accent="orange"
-            className={`flex-1 min-w-0 ${cellCls}`}
+            iconBg={iconBox} accent="orange"
+            className={`flex-1 min-w-0 ${cellCls} ${!sameDropoff ? 'rounded-tl-2xl sm:rounded-bl-2xl' : 'rounded-t-2xl sm:rounded-t-none sm:rounded-l-2xl'}`}
           />
-        )}
+          {!sameDropoff && (
+            <CitySearchInput
+              label="Drop-off location" placeholder="City, airport or address"
+              value={dropoff} onChange={setDropoff}
+              icon={<MapPin className="w-3 h-3 text-orange-300" />}
+              iconBg={iconBox} accent="orange"
+              className={`flex-1 min-w-0 ${cellCls} rounded-tr-2xl sm:rounded-tr-none`}
+            />
+          )}
+        </div>
 
-        {/* Pickup date */}
-        <DatePickerCell
-          label="Pickup date" value={pickupDate} min={today}
-          onChange={setPickupDate}
-          iconColor="text-orange-300"
-          accent="orange"
-        />
+        {/* ── Row 2 (mobile): dates ── */}
+        <div className="flex items-stretch border-b border-white/10 sm:contents">
+          <DatePickerCell
+            label="Pickup date" value={pickupDate} min={today}
+            onChange={setPickupDate} iconColor="text-orange-300" accent="orange"
+            className="relative flex-1 min-w-0 border-r border-white/15"
+          />
+          <DatePickerCell
+            label="Drop-off date" value={dropDate} min={pickupDate || today}
+            onChange={setDropDate} iconColor="text-orange-300" accent="orange"
+            className="relative flex-1 min-w-0 border-r border-white/15"
+          />
+        </div>
 
-        {/* Drop-off date */}
-        <DatePickerCell
-          label="Drop-off date" value={dropDate} min={pickupDate || today}
-          onChange={setDropDate}
-          iconColor="text-orange-300"
-          accent="orange"
-        />
-
-        {/* Search */}
-        <button onClick={go}
-          className="px-5 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-sm hover:opacity-90 transition-all flex items-center gap-2 shrink-0 rounded-r-2xl">
-          Search <ArrowRight className="w-4 h-4" />
-        </button>
+        {/* ── Row 3 (mobile): search button ── */}
+        <div className="flex items-stretch sm:contents">
+          <button onClick={go}
+            className="px-3 sm:px-5 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-xs sm:text-sm hover:opacity-90 transition-all flex items-center justify-center gap-1.5 sm:gap-2 flex-1 sm:flex-none rounded-b-2xl sm:rounded-bl-none sm:rounded-r-2xl">
+            Search <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   )
