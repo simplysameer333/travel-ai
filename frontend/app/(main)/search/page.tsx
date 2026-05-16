@@ -21,6 +21,12 @@ import { useSearchHistoryStore } from '@/store/searchHistoryStore'
 
 const BACKEND_URL = API_BASE_URL
 
+const EMPTY_INTENT: AIResponse['intent'] = {
+  intent: 'flight', from_city: null, to_city: null, city: null,
+  travel_date: null, return_date: null, check_in: null, check_out: null,
+  travelers: 1, nights: null, budget_total: null, ai_message: '',
+}
+
 // ---------------------------------------------------------------------------
 // Transport tab config — add new modes here only
 // ---------------------------------------------------------------------------
@@ -257,14 +263,30 @@ function SearchResults() {
 
   const runSearch = useCallback(async (query: string) => {
     if (!query.trim()) return
+
+    // Detect trip-planning queries up front — these can't be answered by
+    // transport search; redirect immediately instead of hanging on the backend.
+    const TRIP_PLAN_RE = /\b(plan|planning|itinerary|10[ -]day|7[ -]day|14[ -]day|\d+[ -]day trip|trip plan|travel plan|visa tip|budget tip|must.see|top \d+ attraction|cover.*(attraction|sight|place)|route.*budget|budget.*route)\b/i
+    if (TRIP_PLAN_RE.test(query)) {
+      setLoading(false)
+      setData({ success: true, intent: EMPTY_INTENT, results: [], ai_message: '' })
+      return
+    }
+
     setLoading(true); setError(null); setData(null)
     resetFilters(); setSortBy('cheapest')
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 15000)
+
     try {
       const res = await fetch(`${BACKEND_URL}/api/ai/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
+        signal: controller.signal,
       })
+      clearTimeout(timeoutId)
       if (!res.ok) throw new Error(`Server error ${res.status}`)
       const json: AIResponse = await res.json()
       if (!json.success) throw new Error(json.error ?? 'Unknown error')
@@ -272,11 +294,17 @@ function SearchResults() {
       const incoming = json.intent?.intent
       if (incoming) setActiveTab(incoming as TransportTab)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Something went wrong')
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        // Timeout — treat as "no results" so the smart empty state shows
+        setData({ success: true, intent: EMPTY_INTENT, results: [], ai_message: '' })
+      } else {
+        setError(e instanceof Error ? e.message : 'Something went wrong')
+      }
     } finally {
+      clearTimeout(timeoutId)
       setLoading(false)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeTab]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (q) runSearch(q) }, [q, runSearch])
 

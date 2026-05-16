@@ -55,22 +55,22 @@ export function PackageResultCard({ r }: { r: ResultRow }) {
         )}
 
         <div className="flex flex-wrap gap-1.5 mt-2">
-          {inclusions.flights && (
+          {Boolean(inclusions.flights) && (
             <span className="flex items-center gap-1 text-[10px] font-semibold text-sky-700 bg-sky-50 border border-sky-100 px-2 py-0.5 rounded-full">
               <Plane className="w-2.5 h-2.5" /> Flights
             </span>
           )}
-          {(inclusions.meals || inclusions.breakfast) && (
+          {(Boolean(inclusions.meals) || Boolean(inclusions.breakfast)) && (
             <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
               <Utensils className="w-2.5 h-2.5" /> Meals
             </span>
           )}
-          {inclusions.transfers && (
+          {Boolean(inclusions.transfers) && (
             <span className="flex items-center gap-1 text-[10px] font-semibold text-violet-700 bg-violet-50 border border-violet-100 px-2 py-0.5 rounded-full">
               <Car className="w-2.5 h-2.5" /> Transfers
             </span>
           )}
-          {inclusions.hotels && (
+          {Boolean(inclusions.hotels) && (
             <span className="text-[10px] font-semibold text-rose-700 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-full">
               Hotel
             </span>
